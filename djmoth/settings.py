@@ -119,6 +119,7 @@ INSTALLED_APPS = (
 
     # This is the main application which holds all the vulnerabilities
     'moth',
+    'crispy_forms',
     
     # for debugging and testing
     'debug_toolbar',
