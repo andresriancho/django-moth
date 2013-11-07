@@ -120,8 +120,9 @@ INSTALLED_APPS = (
     # This is the main application which holds all the vulnerabilities
     'moth',
     
-    # for debugging
+    # for debugging and testing
     'debug_toolbar',
+    'django_nose',
     
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
@@ -158,3 +159,6 @@ LOGGING = {
 
 # django-debug-toolbar
 INTERNAL_IPS = ('127.0.0.1',)
+
+# django-nose
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
