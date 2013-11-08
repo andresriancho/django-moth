@@ -23,7 +23,6 @@ body {
   background-color: #f8f8f8;
 }
 
-
 /* Custom page CSS
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
@@ -42,4 +41,10 @@ body {
 
 code {
   font-size: 80%;
+}
+
+.output{
+   background-color:#eee;
+   border: 1px solid #888;
+   border-radius:3px;
 }

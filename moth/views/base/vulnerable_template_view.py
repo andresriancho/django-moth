@@ -37,6 +37,7 @@ class VulnerableTemplateView(TemplateView):
         context = super(VulnerableTemplateView, self).get_context_data(**kwargs)
         context['title'] = self.title
         context['description'] = self.description
+        context['false_positive_check'] = self.false_positive_check
         return context
 
     def get(self, request, *args, **kwds):
