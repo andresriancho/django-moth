@@ -21,8 +21,20 @@ class IndexTemplateView(TemplateView):
         self._subviews = subviews
         super(IndexTemplateView, self).__init__(*args, **kwds)
     
+    def _get_title(self):
+        '''
+        :return: Infer a title from the subview information.
+        '''
+        return self._subviews[0].url_path.split('/')[0].replace('_', ' ').title()
+    
     def get(self, request):
         '''
         :return: An HttpResponse with links to all subviews.
         '''
-        return render(request, self.template_name)
+        links = [(v.title, v.url_path) for v in self._subviews]
+        
+        context = {}
+        context['title'] = self._get_title()
+        context['links'] = links
+        
+        return render(request, self.template_name, context)

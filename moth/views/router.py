@@ -5,7 +5,8 @@ from inspect import isclass
 from datrie import Trie
 from django.http import Http404
 
-from moth.views.base.vulnerable_template_view import VulnerableTemplateView 
+from moth.views.base.vulnerable_template_view import VulnerableTemplateView
+from moth.views.base.index_template_view import IndexTemplateView  
 
 
 class RouterView(object):
@@ -92,7 +93,7 @@ class RouterView(object):
                 
         return result
     
-    def _generate_index(self, sub_views):
+    def _generate_index(self, request, url_path, sub_views):
         '''
         When no URL pattern matches we generate a list with all the links in
         the subdirectory. We get here when the request is "foo/", there is no
@@ -102,7 +103,8 @@ class RouterView(object):
         :param sub_views: All the views which should be linked in the index page
         :return: An HttpResponse with the links to "foo/abc" and "foo/def".
         '''
-        pass
+        index = IndexTemplateView(url_path, sub_views)
+        return index.get(request)
     
     def _register(self, url_path, view_obj):
         '''
@@ -135,7 +137,7 @@ class RouterView(object):
             sub_views = self._mapping.values(url_path)
             
             if sub_views:
-                return self._generate_index(sub_views)
+                return self._generate_index(request, url_path, sub_views)
         
             # does not match
             raise Http404

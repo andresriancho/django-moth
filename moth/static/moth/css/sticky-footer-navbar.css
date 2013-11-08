@@ -48,3 +48,11 @@ code {
    border: 1px solid #888;
    border-radius:3px;
 }
+
+.icon-success{
+    color:#53A753;
+}
+
+.icon-error{
+    color:#A80000;
+}
