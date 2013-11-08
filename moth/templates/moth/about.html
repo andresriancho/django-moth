@@ -1,0 +1,41 @@
+{% extends "moth/base.html" %}
+
+{% block head %}About moth{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+	<p>
+	This software is the evolution of the old, Apache+PHP based moth software which
+	helped us test w3af for many years. I decided to move towards Django because:
+	    <ul>
+	        <li>
+	            "python manage.py runserver" allows us to run a test server anywhere,
+	            more specifically in the continuous integration system where w3af's
+	            unit-tests are run
+	        </li>
+	        <li>
+	            Easy to implement any vulnerability in Python
+	        </li>
+	        <li>
+	            A modern development framework, which I'll also use for delivering
+	            web application security trainings.
+	        </li>
+	    </ul>
+	</p>
+	
+	<p>The rewrite was mainly driven by the need of running w3af's tests in a
+	continuous integration system, without any external dependency (such as the
+	old moth vm).</p>
+  </div>
+  
+  <div class="col-md-4">
+    <p>
+        <div class="alert alert-danger">
+	        <i class="fa fa-exclamation-triangle"></i>
+	        This software should <b>never be used in a production environment</b>.
+        </div>
+    </p>
+  </div>
+</div>
+{% endblock %}

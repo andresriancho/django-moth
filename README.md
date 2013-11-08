@@ -1,7 +1,8 @@
 moth: Vulnerable web application
 ================================
 
-A set of vulnerable scripts which can be used for testing web application security scanners, teaching web security, etc.
+A set of vulnerable scripts which can be used for testing web application security scanners, 
+teaching web application security, etc.
 
 This software should **never be used in a production environment**.
 
@@ -11,6 +12,8 @@ Usage
 =====
 
 ```console
+$ git clone https://github.com/andresriancho/django-moth.git
+$ cd django-moth
 $ pip install -r requirements.txt
 $ python manage.py runserver
 ```
