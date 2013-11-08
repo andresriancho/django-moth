@@ -1,6 +1,7 @@
 import os
 import string
 
+from inspect import isclass
 from datrie import Trie
 from django.http import Http404
 
@@ -38,7 +39,7 @@ class RouterView(object):
         :return: The directory we'll crawl to find the VulnerableTemplateView
                  subclasses. Vulnerable views are in "vulnerabilities". 
         '''
-        root_path = os.path.realpath(os.path.curdir)
+        root_path = os.path.realpath(os.path.curdir) + '/'
         self_path = os.path.dirname(os.path.realpath(__file__))
         rel_self_path = self_path.replace(root_path, '')
         return os.path.join(rel_self_path, 'vulnerabilities')
@@ -80,11 +81,14 @@ class RouterView(object):
         result = []
         
         mod_name = fname.replace('/', '.')
+        mod_name = mod_name[:-len('.py')]
         module_inst = __import__(mod_name, fromlist=['*'])
         
-        for variable in dir(module_inst):
-            if issubclass(variable, VulnerableTemplateView):
-                result.append(variable)
+        for var_name in dir(module_inst):
+            var_inst = getattr(module_inst, var_name)
+            if isclass(var_inst):
+                if issubclass(var_inst, VulnerableTemplateView):
+                    result.append(var_inst)
                 
         return result
     
@@ -124,11 +128,11 @@ class RouterView(object):
         
         if url_path in self._mapping:
             view_obj = self._mapping[url_path]
-            return view_obj.as_view()(request, *args, **kwargs)
+            return view_obj.dispatch(request, *args, **kwargs)
         
         else:
             # Try to create an "Index of" page
-            sub_views = self._mappingkeys.values(url_path)
+            sub_views = self._mapping.values(url_path)
             
             if sub_views:
                 return self._generate_index(sub_views)

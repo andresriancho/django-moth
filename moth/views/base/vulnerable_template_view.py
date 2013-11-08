@@ -25,6 +25,9 @@ class VulnerableTemplateView(TemplateView):
     # where he doesn't define the get method, just sets HTML and we'll do the
     # rest
     HTML = None
+    
+    # Is this a real vulnerability or a false positive check?
+    false_positive_check = False
 
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
