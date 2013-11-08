@@ -17,10 +17,10 @@ class VulnerableTemplateView(TemplateView):
     # The description that will appear on the rendered HTML
     description = None
     
-    # The URL pattern (regular expression) which we'll try to match before
+    # The URL pattern string (not regex for now) which we'll try to match before
     # sending information to this view. This is parsed by the router view.
-    url = None
-
+    url_path = None
+    
     # If the subclass just wants to return static HTML, we give him a shortcut
     # where he doesn't define the get method, just sets HTML and we'll do the
     # rest

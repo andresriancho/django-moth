@@ -1,7 +1,10 @@
-import re
 import os
+import string
 
+from datrie import Trie
 from django.http import Http404
+
+from moth.views.base.vulnerable_template_view import VulnerableTemplateView 
 
 
 class RouterView(object):
@@ -13,7 +16,7 @@ class RouterView(object):
     FILE_EXCLUSIONS = set(['__init__.py',])
     
     def __init__(self):
-        self._mapping = {}
+        self._mapping = Trie(string.printable)
         self._view_files = []
         self._autoregister()
     
@@ -28,15 +31,17 @@ class RouterView(object):
         for fname in self._get_vuln_view_files(self._get_vuln_view_directory()):
             for klass in self._get_views_from_file(fname):
                 view_obj = klass()
-                self._register(view_obj.url, view_obj)
+                self._register(view_obj.url_path, view_obj)
     
     def _get_vuln_view_directory(self):
         '''
         :return: The directory we'll crawl to find the VulnerableTemplateView
                  subclasses. Vulnerable views are in "vulnerabilities". 
         '''
+        root_path = os.path.realpath(os.path.curdir)
         self_path = os.path.dirname(os.path.realpath(__file__))
-        return os.path.join(self_path, 'vulnerabilities')
+        rel_self_path = self_path.replace(root_path, '')
+        return os.path.join(rel_self_path, 'vulnerabilities')
     
     def _get_vuln_view_files(self, directory):
         '''
@@ -72,71 +77,61 @@ class RouterView(object):
         :param fname: The file name we need to import * from
         :return: A list of VulnerableTemplateView classes we find in the import 
         '''
-        return []
+        result = []
+        
+        mod_name = fname.replace('/', '.')
+        module_inst = __import__(mod_name, fromlist=['*'])
+        
+        for variable in dir(module_inst):
+            if issubclass(variable, VulnerableTemplateView):
+                result.append(variable)
+                
+        return result
     
-    def _generate_index(self):
+    def _generate_index(self, sub_views):
         '''
         When no URL pattern matches we generate a list with all the links in
         the subdirectory. We get here when the request is "foo/", there is no
         view with that pattern, and there are other views like "foo/abc" and
         "foo/def".
         
+        :param sub_views: All the views which should be linked in the index page
         :return: An HttpResponse with the links to "foo/abc" and "foo/def".
         '''
         pass
     
-    def _register(self, url_pattern, view_obj):
+    def _register(self, url_path, view_obj):
         '''
-        Receives an url_pattern like '/abc/def/foo' and stores that into
-        the _mapping attribute. The way the example url_pattern is stored is:
+        Receives an url_path like '/abc/def/foo' and 'foo' and
+        stores it in a Trie (https://pypi.python.org/pypi/datrie/).
+
+        For now we don't support regular expression matching.
         
-        self._mapping = {
-                         'abc': {
-                                 'def':
-                                       {
-                                       re.compile('foo'): view_obj}
-                                 }
-                         }
-        
-        We store it like that in order to be able to easily generate "Index of"
-        pages without reading the whole directory again.
-        
-        :param url_pattern: An URL pattern like the one used in django's urls.py
+        :param url_path: An URL path like the one used in django's urls.py
         :param view_obj: The view object (not function)
         '''
-        splitted_pattern = self._split_url_pattern(url_pattern)
+        url_path = unicode(url_path)
+        if url_path in self._mapping:
+            raise RuntimeError('Duplicated URL: %s' % url_path)
         
-        # Now we store the pattern in our mapping dict
-        current_dict = self._mapping
-        for part in splitted_pattern[:-1]:
-            if part not in current_dict:
-                current_dict[part] = {}
-            
-            current_dict = current_dict[part]
-            
-        current_dict[splitted_pattern[-1]] = view_obj
+        self._mapping[url_path] = view_obj
         
-    def _split_url_pattern(self, url_pattern):
-        '''
-        :param url_pattern: A string like '/abc/def/foo'
-        :return: ['abc', 'def', re.compile('foo')] 
-        '''
-        if url_pattern.startswith('/'):
-            url_pattern = url_pattern.path[1:]
-            
-        splitted_pattern = url_pattern.split('/')
-        splitted_pattern[-1] = re.compile(splitted_pattern[-1])
-        return splitted_pattern
-
     def __call__(self, request, *args, **kwargs):
         '''
         This handles all requests. It should be short and sweet code.
         '''
-        splitted_pattern = self._split_url_pattern(request.path)
+        url_path = request.path[1:]
         
-        for regex, view_obj in self._mapping.items():
-            if regex.match(request.path[1:]):
-                return view_obj.as_view()(request, *args, **kwargs)
+        if url_path in self._mapping:
+            view_obj = self._mapping[url_path]
+            return view_obj.as_view()(request, *args, **kwargs)
         
-        # does not match
-        raise Http404
+        else:
+            # Try to create an "Index of" page
+            sub_views = self._mappingkeys.values(url_path)
+            
+            if sub_views:
+                return self._generate_index(sub_views)
+        
+            # does not match
+            raise Http404
