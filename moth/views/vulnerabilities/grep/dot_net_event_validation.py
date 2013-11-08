@@ -1,4 +1,4 @@
-from moth.views.vulnerable_template_view import VulnerableTemplateView
+from moth.views.base.vulnerable_template_view import VulnerableTemplateView
 
 
 class DotNetWithEVView(VulnerableTemplateView):

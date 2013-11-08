@@ -2,7 +2,6 @@ import re
 import os
 
 from django.http import Http404
-from django.utils.datastructures import SortedDict
 
 
 class RouterView(object):
@@ -14,7 +13,7 @@ class RouterView(object):
     FILE_EXCLUSIONS = set(['__init__.py',])
     
     def __init__(self):
-        self._mapping = SortedDict()
+        self._mapping = {}
         self._view_files = []
         self._autoregister()
     
@@ -86,14 +85,55 @@ class RouterView(object):
         '''
         pass
     
-    def _register(self, regex, view_func):
-        self.mapping[re.compile(regex)] = view_func
+    def _register(self, url_pattern, view_obj):
+        '''
+        Receives an url_pattern like '/abc/def/foo' and stores that into
+        the _mapping attribute. The way the example url_pattern is stored is:
+        
+        self._mapping = {
+                         'abc': {
+                                 'def':
+                                       {
+                                       re.compile('foo'): view_obj}
+                                 }
+                         }
+        
+        We store it like that in order to be able to easily generate "Index of"
+        pages without reading the whole directory again.
+        
+        :param url_pattern: An URL pattern like the one used in django's urls.py
+        :param view_obj: The view object (not function)
+        '''
+        splitted_pattern = self._split_url_pattern(url_pattern)
+        
+        # Now we store the pattern in our mapping dict
+        current_dict = self._mapping
+        for part in splitted_pattern[:-1]:
+            if part not in current_dict:
+                current_dict[part] = {}
+            
+            current_dict = current_dict[part]
+            
+        current_dict[splitted_pattern[-1]] = view_obj
+        
+    def _split_url_pattern(self, url_pattern):
+        '''
+        :param url_pattern: A string like '/abc/def/foo'
+        :return: ['abc', 'def', re.compile('foo')] 
+        '''
+        if url_pattern.startswith('/'):
+            url_pattern = url_pattern.path[1:]
+            
+        splitted_pattern = url_pattern.split('/')
+        splitted_pattern[-1] = re.compile(splitted_pattern[-1])
+        return splitted_pattern
 
     def __call__(self, request, *args, **kwargs):
         '''
         This handles all requests. It should be short and sweet code.
         '''
-        print request.path
+        splitted_pattern = self._split_url_pattern(request.path)
+        
         for regex, view_obj in self._mapping.items():
             if regex.match(request.path[1:]):
                 return view_obj.as_view()(request, *args, **kwargs)
