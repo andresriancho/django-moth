@@ -7,6 +7,7 @@ from django.http import Http404
 
 from moth.views.base.vulnerable_template_view import VulnerableTemplateView
 from moth.views.base.index_template_view import IndexTemplateView  
+from moth.views.base.html_template_view import HTMLTemplateView
 
 
 class RouterView(object):
@@ -14,6 +15,7 @@ class RouterView(object):
     Route all HTTP requests to the corresponding view.
     '''
     
+    KLASS_EXCLUSIONS = set([HTMLTemplateView,])
     DIR_EXCLUSIONS = set()
     FILE_EXCLUSIONS = set(['__init__.py',])
     
@@ -88,7 +90,8 @@ class RouterView(object):
         for var_name in dir(module_inst):
             var_inst = getattr(module_inst, var_name)
             if isclass(var_inst):
-                if issubclass(var_inst, VulnerableTemplateView):
+                if issubclass(var_inst, VulnerableTemplateView) and \
+                var_inst not in self.KLASS_EXCLUSIONS:
                     result.append(var_inst)
                 
         return result
@@ -118,7 +121,8 @@ class RouterView(object):
         '''
         url_path = unicode(url_path)
         if url_path in self._mapping:
-            raise RuntimeError('Duplicated URL: %s' % url_path)
+            msg = 'Duplicated URL "%s" from "%s".'
+            raise RuntimeError(msg % (url_path, view_obj))
         
         self._mapping[url_path] = view_obj
         

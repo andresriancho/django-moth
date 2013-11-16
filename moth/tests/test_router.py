@@ -18,3 +18,5 @@ class RouterTestCase(TestCase):
         
         self.assertTemplateUsed(response, 'moth/base.html')
         self.assertTemplateUsed(response, 'moth/index-of.html')
+        
+        self.assertNotIn('cross_domain_script_with_type.html', response.content)
