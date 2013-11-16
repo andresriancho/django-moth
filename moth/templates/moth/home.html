@@ -15,11 +15,14 @@
 	<p>
 	This software has numerous vulnerabilities, which are grouped according to the
 	<a href="http://w3af.org">w3af</a> plugin which identifies them:
-	
-	{% comment %}
-	TODO: Add link to top level plugin names
-	{% endcomment %}
 	</p>
+	
+	<ul>	
+		{% for fname in families %}
+			<li><a href="/{{ fname }}/">{{ fname|title }}</a></li>
+		{% endfor %}
+	</ul>
+
   </div>
   
   <div class="col-md-4">

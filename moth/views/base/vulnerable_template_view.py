@@ -21,11 +21,6 @@ class VulnerableTemplateView(TemplateView):
     # sending information to this view. This is parsed by the router view.
     url_path = None
     
-    # If the subclass just wants to return static HTML, we give him a shortcut
-    # where he doesn't define the get method, just sets HTML and we'll do the
-    # rest
-    HTML = None
-    
     # Is this a real vulnerability or a false positive check?
     false_positive_check = False
 

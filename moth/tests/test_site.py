@@ -9,6 +9,9 @@ class SiteTestCase(TestCase):
         self.assertTemplateUsed(response, 'moth/base.html')
         self.assertTemplateUsed(response, 'moth/home.html')
         
+        self.assertIn('<li><a href="/grep/">Grep</a></li>', response.content)
+        self.assertIn('<li><a href="/audit/">Audit</a></li>', response.content)
+        
     def test_about(self):
         response = self.client.get('/about/')
         
