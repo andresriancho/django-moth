@@ -27,11 +27,17 @@ class IndexTemplateView(TemplateView):
         '''
         return self._subviews[0].url_path.split('/')[0].replace('_', ' ').title()
     
+    def _rm_path(self, url_path):
+        '''
+        Removes the path and leaves just the filename.
+        '''
+        return url_path[url_path.index('/')+1:]
+    
     def get(self, request):
         '''
         :return: An HttpResponse with links to all subviews.
         '''
-        links = [(v.title, v.url_path) for v in self._subviews]
+        links = [(v.title, self._rm_path(v.url_path)) for v in self._subviews]
         
         context = {}
         context['title'] = self._get_title()

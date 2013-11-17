@@ -9,17 +9,20 @@ from moth.views.base.vulnerable_template_view import VulnerableTemplateView
 from moth.views.base.index_template_view import IndexTemplateView  
 from moth.views.base.html_template_view import HTMLTemplateView
 
+from moth.utils.plugin_families import get_plugin_families
+
 
 class RouterView(object):
     '''
     Route all HTTP requests to the corresponding view.
     '''
     
-    KLASS_EXCLUSIONS = set([HTMLTemplateView,])
+    KLASS_EXCLUSIONS = set([HTMLTemplateView, VulnerableTemplateView])
     DIR_EXCLUSIONS = set()
     FILE_EXCLUSIONS = set(['__init__.py',])
     
     def __init__(self):
+        self.plugin_families = set(get_plugin_families())
         self._mapping = Trie(string.printable)
         self._view_files = []
         self._autoregister()
@@ -119,13 +122,26 @@ class RouterView(object):
         :param url_path: An URL path like the one used in django's urls.py
         :param view_obj: The view object (not function)
         '''
-        url_path = unicode(url_path)
+        family = self.get_plugin_family_from_module(view_obj)
+        
+        url_path = unicode('%s/%s' % (family, url_path))
         if url_path in self._mapping:
             msg = 'Duplicated URL "%s" from "%s".'
             raise RuntimeError(msg % (url_path, view_obj))
         
         self._mapping[url_path] = view_obj
-        
+    
+    def get_plugin_family_from_module(self, view_obj):
+        '''
+        :param view_obj: A view object, an instance of (for example) 
+                         moth.views.vulnerabilities.audit.xss.SimpleXSSView
+        :return: A string containing the plugin family name, for the previous
+                 input it would be 'audit'.
+        '''
+        module_name = view_obj.__module__
+        split_mname = module_name.split('.')
+        return list(self.plugin_families.intersection(set(split_mname)))[0]
+    
     def __call__(self, request, *args, **kwargs):
         '''
         This handles all requests. It should be short and sweet code.
