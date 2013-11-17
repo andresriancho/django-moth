@@ -56,3 +56,8 @@ code {
 .icon-error{
     color:#A80000;
 }
+
+.centered{
+    float: none;
+    margin: 0 auto;
+}
