@@ -1,0 +1,13 @@
+{% extends "moth/base.html" %}
+
+{% block head %}
+    <i class="fa fa-list-ul"></i> {{ family }} plugin family test suite
+{% endblock %}
+
+{% block content %}
+<ul>
+	{% for title, url in links %}
+	    <li><a href="{{ url }}">{{ title }}</a></li>
+	{% endfor %}
+</ul>
+{% endblock %}

@@ -6,7 +6,8 @@ from datrie import Trie
 from django.http import Http404
 
 from moth.views.base.vulnerable_template_view import VulnerableTemplateView
-from moth.views.base.index_template_view import IndexTemplateView  
+from moth.views.base.index_template_view import IndexTemplateView
+from moth.views.base.family_index_template_view import FamilyIndexTemplateView
 from moth.views.base.html_template_view import HTMLTemplateView
 
 from moth.utils.plugin_families import get_plugin_families
@@ -112,6 +113,10 @@ class RouterView(object):
         index = IndexTemplateView(url_path, sub_views)
         return index.get(request)
     
+    def _generate_family_index(self, request, family, sub_views):
+        index = FamilyIndexTemplateView(family, sub_views)
+        return index.get(request)
+    
     def _register(self, url_path, view_obj):
         '''
         Receives an url_path like '/abc/def/foo' and 'foo' and
@@ -142,6 +147,39 @@ class RouterView(object):
         split_mname = module_name.split('.')
         return list(self.plugin_families.intersection(set(split_mname)))[0]
     
+    def _extract_family_from_path(self, url_path):
+        '''
+        :return: The family name from the url_path. For example:
+                    - /audit/ returns 'audit'
+                    - /grep/foo/bar returns 'grep'
+                
+        :raises ValueError: When the path does not contain a family name as
+                            first directory.
+        '''
+        families = get_plugin_families()
+        path_family = url_path.split('/')[0]
+        if path_family in families:
+            return path_family
+        
+        raise ValueError('Unknown family "%s"' % path_family)
+    
+    def _is_plugin_family_request(self, url_path):
+        '''
+        :return: True when the url_path is just for the family, for example:
+                     - /audit/
+                     - /grep/
+                     
+                 Will return false for:
+                     - /audit/xss/
+                     - /grep/empty/index.html
+        '''
+        families = get_plugin_families()
+        for known_family in families:
+            if ('%s/' % known_family) == url_path:
+                return True
+            
+        return False
+    
     def __call__(self, request, *args, **kwargs):
         '''
         This handles all requests. It should be short and sweet code.
@@ -152,12 +190,20 @@ class RouterView(object):
             view_obj = self._mapping[url_path]
             return view_obj.dispatch(request, *args, **kwargs)
         
+        elif self._is_plugin_family_request(url_path):
+            # Try to create an "Index of" page for this family (grep, audit, etc.)
+            sub_views = self._mapping.values(url_path)
+            family = self._extract_family_from_path(url_path)
+            
+            if sub_views:
+                return self._generate_family_index(request, family, sub_views)
+        
         else:
-            # Try to create an "Index of" page
+            # Try to create an "Index of" page for vulnerabilities
             sub_views = self._mapping.values(url_path)
             
             if sub_views:
                 return self._generate_index(request, url_path, sub_views)
         
-            # does not match
-            raise Http404
+        # does not match anything we know about
+        raise Http404
