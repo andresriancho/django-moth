@@ -31,3 +31,15 @@ class RouterTestCase(TestCase):
         self.assertTemplateUsed(response, 'moth/index-of-family.html')
         
         self.assertNotIn('simple_xss.py', response.content)
+
+    def test_links_with_params(self):
+        '''
+        Want to make sure that the router supports links with query string
+        parameters.
+        '''
+        response = self.client.get('/audit/')
+        self.assertIn('xss/simple_xss.py?text=1', response.content)
+        
+        response = self.client.get('/audit/xss/simple_xss.py?text=foobar123')
+        self.assertIn('foobar123', response.content)
+        
