@@ -9,6 +9,7 @@ from moth.views.base.vulnerable_template_view import VulnerableTemplateView
 from moth.views.base.index_template_view import IndexTemplateView
 from moth.views.base.family_index_template_view import FamilyIndexTemplateView
 from moth.views.base.html_template_view import HTMLTemplateView
+from moth.views.base.static_template_view import StaticFileView
 
 from moth.utils.plugin_families import get_plugin_families
 
@@ -18,7 +19,8 @@ class RouterView(object):
     Route all HTTP requests to the corresponding view.
     '''
     
-    KLASS_EXCLUSIONS = set([HTMLTemplateView, VulnerableTemplateView])
+    KLASS_EXCLUSIONS = set([HTMLTemplateView, VulnerableTemplateView,
+                            StaticFileView])
     DIR_EXCLUSIONS = set()
     FILE_EXCLUSIONS = set(['__init__.py',])
     
