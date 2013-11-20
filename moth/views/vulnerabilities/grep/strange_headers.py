@@ -1,5 +1,5 @@
-from moth.views.base.vulnerable_template_view import VulnerableTemplateView
 from django.shortcuts import render_to_response
+from moth.views.base.vulnerable_template_view import VulnerableTemplateView
 
 
 class StrangeHeadersView(VulnerableTemplateView):
