@@ -7,7 +7,9 @@
 {% block content %}
 <ul>
 	{% for plugin, values in links.items %}
-		<h4><small><i class="fa fa-chevron-right"></i></small> {{ plugin }}</h4>
+		<a href="{{ plugin }}">
+			<h4><small><i class="fa fa-chevron-right"></i></small> {{ plugin }}</h4>
+		</a>
 		{% for title, url in values %}
 		    <li><a href="{{ url }}">{{ title }}</a></li>
 		{% endfor %}
