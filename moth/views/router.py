@@ -39,7 +39,7 @@ class RouterView(object):
         for fname in self._get_vuln_view_files(self._get_vuln_view_directory()):
             for klass in self._get_views_from_file(fname):
                 view_obj = klass()
-                self._register(view_obj.url_path, view_obj)
+                self._register(view_obj.get_url_path(), view_obj)
     
     def _get_vuln_view_directory(self):
         '''

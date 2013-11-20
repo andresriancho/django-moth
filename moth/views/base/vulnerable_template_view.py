@@ -1,3 +1,5 @@
+import urlparse
+
 from django.views.generic import TemplateView
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
@@ -35,6 +37,14 @@ class VulnerableTemplateView(TemplateView):
         context['false_positive_check'] = self.false_positive_check
         return context
 
+    def get_url_path(self):
+        '''
+        :return: The URL path, without any query string. To be used mainly in
+                 routing to the right view without taking parameters (?text=1)
+                 into account.
+        '''
+        return urlparse.urlparse(self.url_path).path
+        
     def get(self, request, *args, **kwds):
         if self.HTML is not None:
             context = self.get_context_data()
