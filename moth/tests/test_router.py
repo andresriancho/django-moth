@@ -26,6 +26,7 @@ class RouterTestCase(TestCase):
         
         self.assertIn('Event validation', response.content)
         self.assertIn('DOM XSS', response.content)
+        self.assertIn('dom_xss/dom-xss.html?name=andres', response.content)
         
         self.assertTemplateUsed(response, 'moth/base.html')
         self.assertTemplateUsed(response, 'moth/index-of-family.html')
