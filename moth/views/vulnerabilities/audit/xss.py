@@ -1,5 +1,5 @@
-from moth.views.base.vulnerable_template_view import VulnerableTemplateView
 from django.shortcuts import render
+from moth.views.base.vulnerable_template_view import VulnerableTemplateView
 
 
 class SimpleXSSView(VulnerableTemplateView):
