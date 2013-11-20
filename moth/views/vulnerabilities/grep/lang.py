@@ -6,7 +6,7 @@ from moth.views.base.html_template_view import HTMLTemplateView
 class LanguageENView(HTMLTemplateView):
     title = 'English page'
     description = 'Page with English words'
-    url_path = 'lang/en.html'
+    url_path = 'en.html'
     
     HTML = '''WASHINGTON, Feb. 9 — The most lethal weapon directed against American troops
     in Iraq is an explosive-packed cylinder that United States intelligence
@@ -30,7 +30,7 @@ class LanguageENView(HTMLTemplateView):
 class LanguageESView(HTMLTemplateView):
     title = 'Spanish page'
     description = 'Page with Spanish words'
-    url_path = 'lang/es.html'
+    url_path = 'es.html'
     
     HTML = '''
     Después de un viernes prácticamente perfecto, Argentina llegaba con gran

@@ -23,7 +23,7 @@ class RouterView(object):
     FILE_EXCLUSIONS = set(['__init__.py',])
     
     def __init__(self):
-        self.plugin_families = set(get_plugin_families())
+        self._plugin_families = set(get_plugin_families())
         self._mapping = Trie(string.printable)
         self._view_files = []
         self._autoregister()
@@ -127,26 +127,15 @@ class RouterView(object):
         :param url_path: An URL path like the one used in django's urls.py
         :param view_obj: The view object (not function)
         '''
-        family = self.get_plugin_family_from_module(view_obj)
+        family, plugin = view_obj.get_family_plugin()
         
-        url_path = unicode('%s/%s' % (family, url_path))
+        url_path = unicode('%s/%s/%s' % (family, plugin, url_path))
         if url_path in self._mapping:
             msg = 'Duplicated URL "%s" from "%s".'
             raise RuntimeError(msg % (url_path, view_obj))
         
         self._mapping[url_path] = view_obj
-    
-    def get_plugin_family_from_module(self, view_obj):
-        '''
-        :param view_obj: A view object, an instance of (for example) 
-                         moth.views.vulnerabilities.audit.xss.SimpleXSSView
-        :return: A string containing the plugin family name, for the previous
-                 input it would be 'audit'.
-        '''
-        module_name = view_obj.__module__
-        split_mname = module_name.split('.')
-        return list(self.plugin_families.intersection(set(split_mname)))[0]
-    
+        
     def _extract_family_from_path(self, url_path):
         '''
         :return: The family name from the url_path. For example:
@@ -156,9 +145,8 @@ class RouterView(object):
         :raises ValueError: When the path does not contain a family name as
                             first directory.
         '''
-        families = get_plugin_families()
         path_family = url_path.split('/')[0]
-        if path_family in families:
+        if path_family in self._plugin_families:
             return path_family
         
         raise ValueError('Unknown family "%s"' % path_family)
@@ -173,8 +161,7 @@ class RouterView(object):
                      - /audit/xss/
                      - /grep/empty/index.html
         '''
-        families = get_plugin_families()
-        for known_family in families:
+        for known_family in self._plugin_families:
             if ('%s/' % known_family) == url_path:
                 return True
             

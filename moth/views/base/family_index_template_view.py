@@ -33,11 +33,11 @@ class FamilyIndexTemplateView(TemplateView):
         result = {}
         
         for view in self._subviews:
-            plugin_name = view.url_path.split('/')[0]
+            _, plugin_name = view.get_family_plugin()
             if plugin_name not in result:
-                result[plugin_name] = [(view.title, view.url_path),]
+                result[plugin_name] = [(view.title, '%s/%s' % (plugin_name, view.url_path)),]
             else:
-                result[plugin_name].append((view.title, view.url_path))
+                result[plugin_name].append((view.title, '%s/%s' % (plugin_name, view.url_path)))
         
         return result
     

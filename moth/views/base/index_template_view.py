@@ -25,19 +25,14 @@ class IndexTemplateView(TemplateView):
         '''
         :return: Infer a title from the subview information.
         '''
-        return self._subviews[0].url_path.split('/')[0].replace('_', ' ').title()
-    
-    def _rm_path(self, url_path):
-        '''
-        Removes the path and leaves just the filename.
-        '''
-        return url_path[url_path.index('/')+1:]
+        family, plugin = self._subviews[0].get_family_plugin()
+        return plugin
     
     def get(self, request):
         '''
         :return: An HttpResponse with links to all subviews.
         '''
-        links = [(v.title, self._rm_path(v.url_path)) for v in self._subviews]
+        links = [(v.title, v.url_path) for v in self._subviews]
         
         context = {}
         context['title'] = self._get_title()

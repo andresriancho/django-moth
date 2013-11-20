@@ -7,7 +7,7 @@ from moth.views.base.vulnerable_template_view import VulnerableTemplateView
 class SVNUsersView(HTMLTemplateView):
     title = 'SVN users in HTML tags'
     description = 'SVN users in HTML comment tags'
-    url_path = 'ajax/index.html'
+    url_path = 'index.html'
     
     HTML = '''
     <script type="text/javascript">

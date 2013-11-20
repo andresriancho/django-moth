@@ -4,6 +4,8 @@ from django.views.generic import TemplateView
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 
+from moth.utils.plugin_families import get_plugin_families
+
 
 class VulnerableTemplateView(TemplateView):
     '''
@@ -25,7 +27,9 @@ class VulnerableTemplateView(TemplateView):
     
     # Is this a real vulnerability or a false positive check?
     false_positive_check = False
-
+    
+    plugin_families = set(get_plugin_families())
+    
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
         return super(VulnerableTemplateView, self).dispatch(*args, **kwargs)
@@ -44,7 +48,22 @@ class VulnerableTemplateView(TemplateView):
                  into account.
         '''
         return urlparse.urlparse(self.url_path).path
+    
+    def get_family_plugin(self):
+        '''
+        :param view_obj: A view object, an instance of (for example) 
+                         moth.views.vulnerabilities.audit.xss.SimpleXSSView
+        :return: A string containing the plugin family name, for the previous
+                 input it would be 'audit'.
+        '''
+        module_name = self.__module__
+        split_mname = module_name.split('.')
         
+        family = list(self.plugin_families.intersection(set(split_mname)))[0]
+        plugin = split_mname[split_mname.index(family) + 1]
+        
+        return family, plugin 
+
     def get(self, request, *args, **kwds):
         if self.HTML is not None:
             context = self.get_context_data()

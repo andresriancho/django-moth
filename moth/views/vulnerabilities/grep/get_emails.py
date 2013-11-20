@@ -5,7 +5,7 @@ class GetEmailsView(HTMLTemplateView):
     title = 'Page with lots of emails'
     description = 'Page with a ton of different emails, false positive checks'\
                   ' email formats, encodings, separators, etc.'
-    url_path = 'get_emails/emails.html'
+    url_path = 'emails.html'
     
     HTML = '''
     <html>

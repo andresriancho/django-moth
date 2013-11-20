@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 class StrangeHeadersView(VulnerableTemplateView):
     title = 'Strange HTTP response headers'
     description = 'Strange HTTP response headers'
-    url_path = 'strange_headers/strange_headers.py'
+    url_path = 'strange_headers.py'
     
     def get(self, request, *args, **kwds):
         context = self.get_context_data()
