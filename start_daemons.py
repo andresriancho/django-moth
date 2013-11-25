@@ -21,15 +21,18 @@
 # which will be made available to the build system as an artifact.
 #
 import os
+import sys
+import argparse
 import logging
 import tempfile
+import select
 import shlex
 import subprocess
 import re
 
 
 LOG_FILE = 'django-moth.log'
-CMD_FMT = 'python manage.py runserver --verbosity=3 %s'
+CMD_FMT = '%s manage.py runserver --verbosity=3 %s'
 MIN_PORT = 8000
 MAX_PORT = 16000
 
@@ -41,7 +44,7 @@ HTTP_ADDRESS_FILE = FMT % 'http'
 HTTPS_ADDRESS_FILE = FMT % 'https'
 
 
-def start_django_app(log_directory):
+def start_django_app(log_directory, python):
     '''
     Start the django application by running "python manage.py runserver".
     
@@ -49,13 +52,19 @@ def start_django_app(log_directory):
     log_directory.
     
     :param log_directory: The location where we should store our logs
+    :param python: The path to the python executable, useful for supporting
+                   running this inside a virtual environment.
     :return: The port in localhost where the application listens for HTTP
              requests
     '''
     log_file = os.path.join(log_directory, LOG_FILE)
     
+    env = os.environ.copy()
+    env['PYTHONUNBUFFERED'] = '1'
+    
     for port in xrange(MIN_PORT, MAX_PORT):
-        cmd = CMD_FMT % port
+        cmd = CMD_FMT % (python, port)
+        #cmd = '%s | tee %s' % (cmd, log_file)
         cmd_args = shlex.split(cmd)
     
         p = subprocess.Popen(
@@ -64,19 +73,30 @@ def start_django_app(log_directory):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             shell=False,
-            universal_newlines=True
+            universal_newlines=True,
+            env=env,
         )
-        # TODO! Esperar a que aparezca algun mensaje y parsear la salida
-        stdout, stderr = p.communicate_otra_cosa_que_no_espera_al_final()
         
-        # Development server is running at http://127.0.0.1:8080/ is what I'm
-        # looking for, if the output doesn't contain that, we try with the
-        # next port.
-        output = stdout + stderr
-        mo = EXPECTED_RE.search(output)
-        if mo:
-            # Success! The server started on the port we tried.
-            return port
+        # Read output while the process is alive
+        line = ''
+        while p.poll() is None:
+            reads, _, _ = select.select([p.stdout, p.stderr], [], [], 1)
+            for r in reads:
+                out = r.read(1)
+                line += out
+                
+                if out == '\n':
+                    # Development server is running at http://127.0.0.1:8080/
+                    # is what I'm looking for, if the output doesn't contain 
+                    # that, we try with the next port.
+                    if EXPECTED_RE.search(line):
+                        # Success! The server started on the port we tried.
+                        msg = 'HTTP daemon is running at https://127.0.0.1:%s/'
+                        print msg % port
+
+                        return p, port
+                    else:
+                        line = ''
     
     raise RuntimeError('Failed to start runserver on any port.')
 
@@ -91,9 +111,11 @@ def start_ssl_proxy(http_port):
     '''
     # TODO: Handle HTTPS
     
-    https_port = None
-    msg = 'HTTPS development server is running at https://127.0.0.1:%s/'
+    https_port = http_port + 1
+    msg = 'HTTPs daemon is running at https://127.0.0.1:%s/'
     print msg % https_port
+    
+    return https_port
 
 def write_address_files(http_port, https_port):
     '''
@@ -106,9 +128,23 @@ def write_address_files(http_port, https_port):
     ADDRESS_FMT = '127.0.0.1:%s'
     file(HTTP_ADDRESS_FILE, 'w').write(ADDRESS_FMT % http_port)
     file(HTTPS_ADDRESS_FILE, 'w').write(ADDRESS_FMT % https_port)
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='Start django-moth daemons.')
     
+    parser.add_argument('--log-directory', help='Where to store log files.',
+                        required=True, dest='log_directory')
+
+    namespace = parser.parse_args()
+    
+    return namespace.log_directory
+
 if __name__ == '__main__':
-    http_port = start_django_app()
+    log_directory = parse_args()
+    python = sys.executable
+    
+    p, http_port = start_django_app(log_directory, python)
     https_port = start_ssl_proxy(http_port)
     write_address_files(http_port, https_port)
     
+    p.wait()
