@@ -23,11 +23,10 @@
 import os
 import sys
 import argparse
-import logging
-import tempfile
 import select
 import shlex
 import subprocess
+import threading
 import re
 
 LOG_FILE = 'django-moth.log'
@@ -56,7 +55,8 @@ def start_django_app(log_directory, python):
     :return: The port in localhost where the application listens for HTTP
              requests
     '''
-    log_file = os.path.join(log_directory, LOG_FILE)
+    log_file_path = os.path.join(log_directory, LOG_FILE)
+    log_file = file(log_file_path, 'w')
     
     env = os.environ.copy()
     env['PYTHONUNBUFFERED'] = '1'
@@ -85,6 +85,7 @@ def start_django_app(log_directory, python):
             for r in reads:
                 out = r.read(1)
                 line += out
+                log_file.write(out)
                 
                 if out == '\n':
                     # Development server is running at http://127.0.0.1:8080/
@@ -94,14 +95,29 @@ def start_django_app(log_directory, python):
                         # Success! The server started on the port we tried.
                         msg = 'HTTP daemon is running at https://127.0.0.1:%s/'
                         print msg % port
+                        
+                        monitor_thread = threading.Thread(target=log_monitor,
+                                                  args=(p, log_file))
+                        monitor_thread.start()
 
-                        return p, port
+                        return p, monitor_thread, port
                     else:
                         line = ''
     
     raise RuntimeError('Failed to start runserver on any port.')
 
-
+def log_monitor(process, log_file):
+    '''
+    :param process: The process we want to read output from
+    :param log_file: The file where output should be written
+    '''
+    while process.poll() is None:
+        reads, _, _ = select.select([process.stdout, process.stderr], [], [], 1)
+        for r in reads:
+            log_file.write(r.read(1))
+        
+        log_file.flush()
+    
 def start_ssl_proxy(http_port):
     '''
     Start an SSL proxy that will listen for HTTPS requests on one port and
@@ -144,7 +160,7 @@ if __name__ == '__main__':
     log_directory = parse_args()
     python = sys.executable
     
-    p, http_port = start_django_app(log_directory, python)
+    p, monitor_thread, http_port = start_django_app(log_directory, python)
     https_port = start_ssl_proxy(http_port)
     write_address_files(http_port, https_port)
     
