@@ -5,6 +5,7 @@ class SiteTestCase(TestCase):
     def test_home(self):
         response = self.client.get('/')
         
+        # pylint: disable=E1103
         self.assertIn('A set of vulnerable scripts', response.content)
         self.assertTemplateUsed(response, 'moth/base.html')
         self.assertTemplateUsed(response, 'moth/home.html')
@@ -15,6 +16,7 @@ class SiteTestCase(TestCase):
     def test_about(self):
         response = self.client.get('/about/')
         
+        # pylint: disable=E1103
         self.assertIn('This software is the evolution', response.content)
         self.assertTemplateUsed(response, 'moth/base.html')
         self.assertTemplateUsed(response, 'moth/about.html')

@@ -1,4 +1,4 @@
 test:
   override:
-    - "pylint -E *"
+    - "pylint -iy -E djmoth moth start_daemons.py"
     - "python manage.py test"

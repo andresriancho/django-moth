@@ -77,6 +77,7 @@ def start_django_app(log_directory, python):
             cwd=os.path.dirname(os.path.realpath(__file__)),
         )
         
+        # pylint: disable=E1101
         # Read output while the process is alive
         line = ''
         while p.poll() is None:
@@ -147,4 +148,5 @@ if __name__ == '__main__':
     https_port = start_ssl_proxy(http_port)
     write_address_files(http_port, https_port)
     
+    # pylint: disable=E1101
     p.wait()

@@ -5,6 +5,7 @@ class RouterTestCase(TestCase):
     def test_routes_grep(self):
         response = self.client.get('/grep/dot_net_event_validation/event_validation.html')
         
+        # pylint: disable=E1103
         self.assertIn('.NET Event validation', response.content)
         self.assertTemplateUsed(response, 'moth/base.html')
         self.assertTemplateUsed(response, 'moth/vulnerability.html')
@@ -12,6 +13,7 @@ class RouterTestCase(TestCase):
     def test_index_of(self):
         response = self.client.get('/grep/dot_net_event_validation/')
         
+        # pylint: disable=E1103
         self.assertIn('dot_net_event_validation test suite', response.content)
         self.assertIn('(secure)', response.content)
         self.assertIn('(insecure)', response.content)
@@ -24,6 +26,7 @@ class RouterTestCase(TestCase):
     def test_family_index_of(self):
         response = self.client.get('/grep/')
         
+        # pylint: disable=E1103
         self.assertIn('Event validation', response.content)
         self.assertIn('DOM XSS', response.content)
         self.assertIn('dom_xss/dom-xss.html?name=andres', response.content)
@@ -38,6 +41,7 @@ class RouterTestCase(TestCase):
         Want to make sure that the router supports links with query string
         parameters.
         '''
+        # pylint: disable=E1103
         response = self.client.get('/audit/')
         self.assertIn('xss/simple_xss.py?text=1', response.content)
         

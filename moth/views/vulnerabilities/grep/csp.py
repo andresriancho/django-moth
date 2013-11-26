@@ -10,6 +10,7 @@ class CSPTemplateView(object):
     CSP = None
     
     def get(self, request, *args, **kwds):
+        # pylint: disable=E1101
         context = self.get_context_data()
         context['html'] = HTML
         

@@ -63,11 +63,3 @@ class VulnerableTemplateView(TemplateView):
         plugin = split_mname[split_mname.index(family) + 1]
         
         return family, plugin 
-
-    def get(self, request, *args, **kwds):
-        if self.HTML is not None:
-            context = self.get_context_data()
-            context['html'] = self.HTML
-            return render(request, self.template_name, context)
-        else:
-            return super(VulnerableTemplateView, self).get(request, *args, **kwds)
