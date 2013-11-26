@@ -30,7 +30,6 @@ import shlex
 import subprocess
 import re
 
-
 LOG_FILE = 'django-moth.log'
 CMD_FMT = '%s manage.py runserver --verbosity=3 %s'
 MIN_PORT = 8000
@@ -66,7 +65,7 @@ def start_django_app(log_directory, python):
         cmd = CMD_FMT % (python, port)
         #cmd = '%s | tee %s' % (cmd, log_file)
         cmd_args = shlex.split(cmd)
-    
+        
         p = subprocess.Popen(
             cmd_args,
             stdin=subprocess.PIPE,
@@ -75,6 +74,7 @@ def start_django_app(log_directory, python):
             shell=False,
             universal_newlines=True,
             env=env,
+            cwd=os.path.dirname(os.path.realpath(__file__)),
         )
         
         # Read output while the process is alive
