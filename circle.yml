@@ -1,0 +1,4 @@
+test:
+  override:
+    - "pylint -E *"
+    - "python manage.py test"
