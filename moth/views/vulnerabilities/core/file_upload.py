@@ -1,11 +1,10 @@
 from django.shortcuts import render
 from django import forms
-from django.views.decorators.csrf import csrf_exempt
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Submit
 
-from moth.views.base.vulnerable_template_view import VulnerableTemplateView
+from moth.views.base.form_template_view import FormTemplateView
 
 
 class UploadForm(forms.Form):
@@ -24,13 +23,12 @@ class UploadForm(forms.Form):
 
         # generate layout
         self.helper.layout = Layout(
-                                    Field('_file', label='Upload file'),
+                                    Field('_file'),
                                     submit
         )
 
 
-class ContactView(VulnerableTemplateView):
-    template_name = "moth/vulnerability-form.html"
+class ContactView(FormTemplateView):
     form_class = UploadForm
     title = description = 'File uploads using multipart'
     url_path = 'upload.py'
