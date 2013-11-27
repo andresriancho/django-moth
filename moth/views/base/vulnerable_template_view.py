@@ -2,7 +2,7 @@ import urlparse
 
 from django.views.generic import TemplateView
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
+from django.utils.decorators import method_decorator
 
 from moth.utils.plugin_families import get_plugin_families
 
@@ -13,7 +13,7 @@ class VulnerableTemplateView(TemplateView):
     returned by the subclasses, disable anti-CSRF, etc.
     '''
     # The template to use to render this view
-    template_name = "moth/vulnerability.html"
+    template_name = "moth/vulnerability-output.html"
     
     # The title that will appear on the rendered HTML
     title = None
@@ -30,7 +30,7 @@ class VulnerableTemplateView(TemplateView):
     
     plugin_families = set(get_plugin_families())
     
-    @csrf_exempt
+    @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(VulnerableTemplateView, self).dispatch(*args, **kwargs)
     
