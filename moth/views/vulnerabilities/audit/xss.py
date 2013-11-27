@@ -22,6 +22,7 @@ class XSSForm1(forms.Form):
     text = forms.CharField()
     
     def __init__(self, * args, **kwargs):
+        # pylint: disable=E1002
         super(XSSForm1, self).__init__(*args, **kwargs)
 
         self.helper = FormHelper()

@@ -11,6 +11,7 @@ class UploadForm(forms.Form):
     _file = forms.FileField()
 
     def __init__(self, * args, **kwargs):
+        # pylint: disable=E1002
         super(UploadForm, self).__init__(*args, **kwargs)
 
         self.helper = FormHelper()
