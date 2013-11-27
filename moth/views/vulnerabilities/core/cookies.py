@@ -8,7 +8,7 @@ COOKIE_VALUE = 'something from somewhere'
 
 
 class SetCookieView(VulnerableTemplateView):
-    description = title = 'Sets a TestCookie for testing'
+    description = title = 'Sets a "TestCookie" for testing'
     url_path = 'set-cookie.py'
     
     def get(self, request, *args, **kwds):
@@ -21,7 +21,7 @@ class SetCookieView(VulnerableTemplateView):
         return response
 
 class GetCookieView(VulnerableTemplateView):
-    description = title = 'Checks for TestCookie'
+    description = title = 'Checks for "TestCookie"'
     url_path = 'get-cookie.py'
     
     def get(self, request, *args, **kwds):
@@ -34,6 +34,23 @@ class GetCookieView(VulnerableTemplateView):
             msg = 'Cookie was NOT sent.'
         
         context['html'] = msg
+        
+        return render(request, self.template_name, context)
+
+class EchoCookiesView(VulnerableTemplateView):
+    description = title = 'Echoes all cookies'
+    url_path = 'echo-cookies.py'
+    
+    def get(self, request, *args, **kwds):
+        context = self.get_context_data()
+        
+        html = ''
+        msg_fmt = 'Cookie "%s" with value "%s" <br/>\n'
+        
+        for cookie_name in request.COOKIES:
+            html += msg_fmt % (cookie_name, request.COOKIES[cookie_name])
+            
+        context['html'] = html
         
         return render(request, self.template_name, context)
 
