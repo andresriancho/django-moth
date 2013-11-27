@@ -30,11 +30,11 @@ import threading
 import re
 
 LOG_FILE = 'django-moth.log'
-CMD_FMT = '%s manage.py runserver --verbosity=3 %s'
+CMD_FMT = '%s manage.py trunserver %s'
 MIN_PORT = 8000
 MAX_PORT = 16000
 
-EXPECTED_RE = re.compile('Development server is running at http://127\.0\.0\.1:(\d+)/')
+EXPECTED_RE = re.compile('Site starting on (\d+)')
 
 # See: w3af.core.controllers.ci.moth
 FMT = '/tmp/moth-%s.txt'

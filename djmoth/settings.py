@@ -124,6 +124,7 @@ INSTALLED_APPS = (
     # for debugging and testing
     #'debug_toolbar',
     'django_nose',
+    'trunserv',
     
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
