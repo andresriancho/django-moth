@@ -10,6 +10,7 @@ from moth.views.base.index_template_view import IndexTemplateView
 from moth.views.base.family_index_template_view import FamilyIndexTemplateView
 from moth.views.base.html_template_view import HTMLTemplateView
 from moth.views.base.static_template_view import StaticFileView
+from moth.views.base.form_template_view import FormTemplateView
 
 from moth.utils.plugin_families import get_plugin_families
 
@@ -20,7 +21,7 @@ class RouterView(object):
     '''
     
     KLASS_EXCLUSIONS = set([HTMLTemplateView, VulnerableTemplateView,
-                            StaticFileView])
+                            StaticFileView, FormTemplateView])
     DIR_EXCLUSIONS = set()
     FILE_EXCLUSIONS = set(['__init__.py',])
     
@@ -40,8 +41,12 @@ class RouterView(object):
         '''
         for fname in self._get_vuln_view_files(self._get_vuln_view_directory()):
             for klass in self._get_views_from_file(fname):
-                view_obj = klass()
-                self._register(view_obj.get_url_path(), view_obj)
+                try:
+                    view_obj = klass()
+                    self._register(view_obj.get_url_path(), view_obj)
+                except Exception, e:
+                    msg = 'An exception occured while trying to register %s: "%s"'
+                    raise RuntimeError(msg % (view_obj, e))
     
     def _get_vuln_view_directory(self):
         '''
