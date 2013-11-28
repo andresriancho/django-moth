@@ -6,8 +6,13 @@
 
 {% block content %}
 <ul>
-	{% for title, url in links %}
-	    <li><a href="{{ url }}">{{ title }}</a></li>
+	{% for title, url, tags in links %}
+	    <li>
+	       <a href="{{ url }}">{{ title }}</a>
+           {% for tag in tags %}
+              <span class="label label-info">{{ tag }}</span>
+           {% endfor %}
+	    </li>
 	{% endfor %}
 </ul>
 

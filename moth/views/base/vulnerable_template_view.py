@@ -28,6 +28,10 @@ class VulnerableTemplateView(TemplateView):
     # Is this a real vulnerability or a false positive check?
     false_positive_check = False
     
+    # You can provide tags to a vulnerability, such as trivial, POST, GET,
+    # high risk, hacme, etc.
+    tags = []
+    
     plugin_families = set(get_plugin_families())
     
     @method_decorator(csrf_exempt)
@@ -39,6 +43,7 @@ class VulnerableTemplateView(TemplateView):
         context['title'] = self.title
         context['description'] = self.description
         context['false_positive_check'] = self.false_positive_check
+        context['tags'] = self.tags
         return context
 
     def get_url_path(self):
