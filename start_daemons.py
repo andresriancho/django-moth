@@ -142,9 +142,13 @@ def write_address_files(http_port, https_port):
     :param http_port: The TCP/IP port where the Django application listens
     :param https_port: The TCP/IP SSL port where the Django application listens
     '''
+    print 'Writing address files ...',
+    
     ADDRESS_FMT = '127.0.0.1:%s'
     file(HTTP_ADDRESS_FILE, 'w').write(ADDRESS_FMT % http_port)
     file(HTTPS_ADDRESS_FILE, 'w').write(ADDRESS_FMT % https_port)
+    
+    print ' done!' 
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Start django-moth daemons.')
