@@ -15,6 +15,7 @@ class SQLIntegerFormView(FormTemplateView):
     url_path = 'where_integer_form.py'
     
     def post(self, request, *args, **kwds):
+        # pylint: disable=E1101
         form = GenericForm(data=request.POST)
         if not form.is_valid():
             context = self.get_context_data(success=False,
