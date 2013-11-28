@@ -33,20 +33,9 @@ class ContactView(FormTemplateView):
     form_class = UploadForm
     title = description = 'File uploads using multipart'
     url_path = 'upload.py'
-    
-    def get(self, request, *args, **kwargs):
-        """
-        Handles GET requests and instantiates a blank version of the form.
-        """
-        form = UploadForm()
-        return render(request, self.template_name,
-                      self.get_context_data(form=form))
+    form_klass = UploadForm
 
     def post(self, request, *args, **kwargs):
-        """
-        Handles POST requests, instantiating a form instance with the passed
-        POST variables and then checked for validity.
-        """
         has_files = bool(request.FILES)
         msg = 'The file was was successfully uploaded' if has_files else 'Error!'
         
