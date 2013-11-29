@@ -5,7 +5,8 @@ from moth.views.base.form_template_view import FormTemplateView
 
 
 class SimpleXSSView(VulnerableTemplateView):
-    title = 'Cross-Site scripting (trivial)'
+    title = 'Cross-Site scripting'
+    tags = ['trivial', 'GET']
     description = 'Echo query string parameter to HTML without any encoding'
     url_path = 'simple_xss.py?text=1'
     
@@ -15,7 +16,8 @@ class SimpleXSSView(VulnerableTemplateView):
         return render(request, self.template_name, context)
 
 class SimpleFormXSSView(FormTemplateView):
-    title = 'Cross-Site scripting in form (trivial)'
+    title = 'Cross-Site scripting in form'
+    tags = ['trivial', 'POST']
     description = 'Echo form parameter to HTML without any encoding'
     url_path = 'simple_xss_form.py'
     

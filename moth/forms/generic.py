@@ -19,4 +19,4 @@ class GenericForm(forms.Form):
         self.helper.layout = Layout(
                                     Field(self.INPUT,),
                                     submit
-        )
+                                    )
