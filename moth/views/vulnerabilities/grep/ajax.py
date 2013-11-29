@@ -4,9 +4,9 @@ from moth.views.base.html_template_view import HTMLTemplateView
 from moth.views.base.vulnerable_template_view import VulnerableTemplateView
 
 
-class SVNUsersView(HTMLTemplateView):
-    title = 'SVN users in HTML tags'
-    description = 'SVN users in HTML comment tags'
+class XMLHttpRequestAjaxView(HTMLTemplateView):
+    title = 'AJAX code which performs a simple XMLHttpRequest'
+    description = 'Performs a simple XMLHttpRequest to retrieve ajax_info.txt'
     url_path = 'index.html'
     
     HTML = '''
@@ -41,7 +41,7 @@ class SVNUsersView(HTMLTemplateView):
 class AjaxInfoView(VulnerableTemplateView):
     title = 'Ajax info for XMLHttpRequest'
     description = 'Ajax info for XMLHttpRequest, not a vulnerability test.'
-    url_path = 'ajax/ajax_info.txt'
+    url_path = 'ajax_info.txt'
 
     def get(self, request, *args, **kwds):
         ajax_info = 'foo\nbar'
