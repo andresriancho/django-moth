@@ -32,6 +32,9 @@ class VulnerableTemplateView(TemplateView):
     # high risk, hacme, etc.
     tags = []
     
+    # URLs to interesting/related information
+    references = []
+    
     plugin_families = set(get_plugin_families())
     
     @method_decorator(csrf_exempt)
@@ -44,6 +47,7 @@ class VulnerableTemplateView(TemplateView):
         context['description'] = self.description
         context['false_positive_check'] = self.false_positive_check
         context['tags'] = self.tags
+        context['references'] = self.references
         return context
 
     def get_url_path(self):
