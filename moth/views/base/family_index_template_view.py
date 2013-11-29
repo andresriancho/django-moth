@@ -39,6 +39,9 @@ class FamilyIndexTemplateView(TemplateView):
             else:
                 result[plugin_name].append((view.title, '%s/%s' % (plugin_name, view.url_path)))
         
+        for plugin_name in result:
+            result[plugin_name] = sorted(result[plugin_name], key=lambda x: x[0])
+        
         return result
     
     def get(self, request):
