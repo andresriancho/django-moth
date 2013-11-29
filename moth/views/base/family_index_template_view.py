@@ -49,6 +49,7 @@ class FamilyIndexTemplateView(TemplateView):
         :return: An HttpResponse with links to all subviews.
         '''
         links = self._generate_link_structure()
+        links = sorted(links.iteritems(), key=lambda (k, v): k)
         
         context = {}
         context['family'] = self._family.title() 
