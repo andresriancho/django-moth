@@ -33,6 +33,7 @@ class IndexTemplateView(TemplateView):
         :return: An HttpResponse with links to all subviews.
         '''
         links = [(v.title, v.url_path, v.tags) for v in self._subviews]
+        links = sorted(links, key=lambda x: x[0])
         
         context = {}
         context['title'] = self._get_title()
