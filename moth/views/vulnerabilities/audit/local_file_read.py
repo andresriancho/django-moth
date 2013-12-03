@@ -15,9 +15,14 @@ class TrivialLocalFileReadView(VulnerableTemplateView):
         context = self.get_context_data()
         fname = os.path.join(STATIC_DIR, request.GET['file'])
         
-        if os.path.exists(fname):
-            context['html'] = file(fname).read()
+        try:
+            os.path.exists(fname)
+        except:
+            context['html'] = 'Invalid file name.'
         else:
-            context['html'] = 'Unknown file.'
+            if os.path.exists(fname):
+                context['html'] = file(fname).read()
+            else:
+                context['html'] = 'Unknown file.'
             
         return render(request, self.template_name, context)
