@@ -25,3 +25,26 @@ class SimpleFormXSSView(FormTemplateView):
         context = self.get_context_data()
         context['message'] = request.POST['text']
         return render(request, self.template_name, context)
+
+
+class FalsePositiveCheck499View(VulnerableTemplateView):
+    title = '(almost) Cross-Site Scripting'
+    tags = ['false-positive', 'GET', 'filtered']
+    description = 'Echo query string parameter to HTML tag attribute removing'\
+                  ' the single quotes which are present in the input.'
+    url_path = '499_check.py?text=1'
+    false_positive_check = True
+    references = ['https://github.com/andresriancho/w3af/pull/499']
+    
+    def get(self, request, *args, **kwds):
+        context = self.get_context_data()
+        
+        text = request.GET['text']
+        text = text.replace('"', '')
+        
+        link = '<a href="http://external/abc/%s">Check link href</a>'
+        
+        context['html'] = link % text
+        
+        return render(request, self.template_name, context)
+
