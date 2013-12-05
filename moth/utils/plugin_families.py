@@ -11,4 +11,4 @@ def get_plugin_families():
         vuln_content.remove('__init__.pyc')
     except ValueError:
         pass
-    return vuln_content
+    return sorted(vuln_content)
