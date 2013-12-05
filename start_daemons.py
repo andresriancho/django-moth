@@ -30,11 +30,16 @@ import threading
 import re
 
 LOG_FILE = 'django-moth.log'
+SSL_LOG_FILE = 'django-moth-ssl.log'
+
 CMD_FMT = '%s manage.py trunserver %s'
+SSL_CMD_FMT = '%s manage.py trunserver %s --ssl-priv-key=ssl/privkey.pem'\
+              ' --ssl-cert=ssl/cacert.pem'
 MIN_PORT = 8000
 MAX_PORT = 16000
 
 EXPECTED_RE = re.compile('Site starting on (\d+)')
+SSL_EXPECTED_RE = re.compile('Site \(TLS\) starting on (\d+)')
 
 # See: w3af.core.controllers.ci.moth
 FMT = '/tmp/moth-%s.txt'
@@ -42,7 +47,15 @@ HTTP_ADDRESS_FILE = FMT % 'http'
 HTTPS_ADDRESS_FILE = FMT % 'https'
 
 
-def start_django_app(log_directory, python):
+def start_django_app_http(log_directory, python):
+    return _start_django_app(log_directory, python, CMD_FMT,
+                             EXPECTED_RE, LOG_FILE)
+
+def start_django_app_https(log_directory, python):
+    return _start_django_app(log_directory, python, SSL_CMD_FMT,
+                             SSL_EXPECTED_RE, SSL_LOG_FILE)
+
+def _start_django_app(log_directory, python, cmd_fmt, expected_re, log_file):
     '''
     Start the django application by running "python manage.py runserver".
     
@@ -52,17 +65,20 @@ def start_django_app(log_directory, python):
     :param log_directory: The location where we should store our logs
     :param python: The path to the python executable, useful for supporting
                    running this inside a virtual environment.
+    :param cmd_fmt: The command format to use to start the server
+    :param expected_re: A regular expression object that's used to match the
+                        successful start of trunserver
     :return: The port in localhost where the application listens for HTTP
              requests
     '''
-    log_file_path = os.path.join(log_directory, LOG_FILE)
+    log_file_path = os.path.join(log_directory, log_file)
     log_file = file(log_file_path, 'w')
     
     env = os.environ.copy()
     env['PYTHONUNBUFFERED'] = '1'
     
     for port in xrange(MIN_PORT, MAX_PORT):
-        cmd = CMD_FMT % (python, port)
+        cmd = cmd_fmt % (python, port)
         #cmd = '%s | tee %s' % (cmd, log_file)
         cmd_args = shlex.split(cmd)
         
@@ -91,9 +107,9 @@ def start_django_app(log_directory, python):
                     # Development server is running at http://127.0.0.1:8080/
                     # is what I'm looking for, if the output doesn't contain 
                     # that, we try with the next port.
-                    if EXPECTED_RE.search(line):
+                    if expected_re.search(line):
                         # Success! The server started on the port we tried.
-                        msg = 'HTTP daemon is running at https://127.0.0.1:%s/'
+                        msg = 'Daemon is running at 127.0.0.1:%s'
                         print msg % port
                         
                         monitor_thread = threading.Thread(target=log_monitor,
@@ -101,6 +117,9 @@ def start_django_app(log_directory, python):
                         monitor_thread.start()
 
                         return p, monitor_thread, port
+                    elif 'Address already in use' in line:
+                        # Die, die, dieeee!
+                        p.kill()
                     else:
                         line = ''
     
@@ -118,22 +137,6 @@ def log_monitor(process, log_file):
         
         log_file.flush()
     
-def start_ssl_proxy(http_port):
-    '''
-    Start an SSL proxy that will listen for HTTPS requests on one port and
-    forward them to the Django application which lives in http_port
-    
-    :param http_port: The TCP/IP port where the Django application listens
-    :return: None
-    '''
-    # TODO: Handle HTTPS
-    
-    https_port = http_port + 1
-    msg = 'HTTPs daemon is running at https://127.0.0.1:%s/'
-    print msg % https_port
-    
-    return https_port
-
 def write_address_files(http_port, https_port):
     '''
     Since the django application will start on a random port, and we want
@@ -164,9 +167,10 @@ if __name__ == '__main__':
     log_directory = parse_args()
     python = sys.executable
     
-    p, monitor_thread, http_port = start_django_app(log_directory, python)
-    https_port = start_ssl_proxy(http_port)
+    p1, monitor_thread, http_port = start_django_app_http(log_directory, python)
+    p2, monitor_thread, https_port = start_django_app_https(log_directory, python)
     write_address_files(http_port, https_port)
     
     # pylint: disable=E1101
-    p.wait()
+    p1.wait()
+    p2.wait()
