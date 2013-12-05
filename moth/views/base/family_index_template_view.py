@@ -34,10 +34,13 @@ class FamilyIndexTemplateView(TemplateView):
         
         for view in self._subviews:
             _, plugin_name = view.get_family_plugin()
+            path = '%s/%s' % (plugin_name, view.url_path)
+            tags = view.tags
+            
             if plugin_name not in result:
-                result[plugin_name] = [(view.title, '%s/%s' % (plugin_name, view.url_path)),]
+                result[plugin_name] = [(view.title, path, tags),]
             else:
-                result[plugin_name].append((view.title, '%s/%s' % (plugin_name, view.url_path)))
+                result[plugin_name].append((view.title, path, tags))
         
         for plugin_name in result:
             result[plugin_name] = sorted(result[plugin_name], key=lambda x: x[0])

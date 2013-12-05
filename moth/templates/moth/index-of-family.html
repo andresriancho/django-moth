@@ -10,8 +10,13 @@
 		<a href="{{ plugin }}/">
 			<h4><small><i class="fa fa-chevron-right"></i></small> {{ plugin }}</h4>
 		</a>
-		{% for title, url in values %}
-		    <li><a href="{{ url }}">{{ title }}</a></li>
+		{% for title, url, tags in values %}
+		    <li>
+		    	<a href="{{ url }}">{{ title }}</a>
+	           {% for tag in tags %}
+	              <span class="label label-info">{{ tag }}</span>
+	           {% endfor %}
+		    </li>
 		{% endfor %}
 		<br>
 	{% endfor %}
