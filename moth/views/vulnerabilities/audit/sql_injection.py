@@ -43,7 +43,7 @@ class SQLIntegerQSView(VulnerableTemplateView):
     template_name = "moth/vulnerability-users-table.html"
     
     def get(self, request, *args, **kwds):
-        user_input = request.GET['id']
+        user_input = request.GET.get('id', '1')
         query = "SELECT * FROM auth_user WHERE id = %s" % user_input
         
         db_error, users = get_users(query)
@@ -63,7 +63,7 @@ class SQLSingleQuoteStringQSView(VulnerableTemplateView):
     template_name = "moth/vulnerability-users-table.html"
     
     def get(self, request, *args, **kwds):
-        user_input = request.GET['uname']
+        user_input = request.GET.get('uname', 'pablo')
         query = "SELECT * FROM auth_user WHERE username = '%s'" % user_input
         
         db_error, users = get_users(query)
