@@ -33,6 +33,9 @@ class FamilyIndexTemplateView(TemplateView):
         result = {}
         
         for view in self._subviews:
+            if not view.linked:
+                continue
+            
             _, plugin_name = view.get_family_plugin()
             path = '%s/%s' % (plugin_name, view.url_path)
             tags = view.tags

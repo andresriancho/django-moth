@@ -35,6 +35,9 @@ class VulnerableTemplateView(TemplateView):
     # URLs to interesting/related information
     references = []
     
+    # Add link to this view from the index?
+    linked = True
+    
     plugin_families = set(get_plugin_families())
     
     @method_decorator(csrf_exempt)
