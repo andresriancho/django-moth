@@ -20,3 +20,7 @@ $ python manage.py runserver
 
 Then browse to http://127.0.0.1:8000/ .
 
+Utils
+=====
+
+If you're interested in using `django-moth` as part of a CI system, [django-moth-utils](https://github.com/andresriancho/django-moth-utils) will make your life easier.
