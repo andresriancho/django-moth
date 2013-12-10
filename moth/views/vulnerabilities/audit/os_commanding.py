@@ -16,11 +16,16 @@ class TrivialOSCommandingView(VulnerableTemplateView):
     def get(self, request, *args, **kwds):
         context = self.get_context_data()
         
-        cmd_args = shlex.split(request.GET['cmd'])
         try:
-            context['html'] = subprocess.check_output(cmd_args)
-        except subprocess.CalledProcessError, cpe:
-            context['html'] = cpe.output
+            cmd_args = shlex.split(request.GET['cmd'])
+        except ValueError:
+            # ValueError, "No closing quotation"
+            context['html'] = 'Invalid command'
+        else:
+            try:
+                context['html'] = subprocess.check_output(cmd_args)
+            except subprocess.CalledProcessError, cpe:
+                context['html'] = cpe.output
         
         return render(request, self.template_name, context)
     
@@ -49,11 +54,16 @@ class BlindOSCommandingView(VulnerableTemplateView):
     def get(self, request, *args, **kwds):
         context = self.get_context_data()
         context['html'] = 'Hiding command output!'
-        
-        cmd_args = shlex.split(request.GET['cmd'])
+
         try:
-            subprocess.check_output(cmd_args)
-        except subprocess.CalledProcessError:
-            pass
+            cmd_args = shlex.split(request.GET['cmd'])
+        except ValueError:
+            # ValueError, "No closing quotation"
+            context['html'] = 'Invalid command'
+        else:
+            try:
+                subprocess.check_output(cmd_args)
+            except subprocess.CalledProcessError:
+                pass
 
         return render(request, self.template_name, context)
