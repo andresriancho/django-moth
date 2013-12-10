@@ -26,6 +26,8 @@ class TrivialOSCommandingView(VulnerableTemplateView):
                 context['html'] = subprocess.check_output(cmd_args)
             except subprocess.CalledProcessError, cpe:
                 context['html'] = cpe.output
+            except OSError:
+                context['html'] = 'Invalid command'
         
         return render(request, self.template_name, context)
     
@@ -59,11 +61,13 @@ class BlindOSCommandingView(VulnerableTemplateView):
             cmd_args = shlex.split(request.GET['cmd'])
         except ValueError:
             # ValueError, "No closing quotation"
-            context['html'] = 'Invalid command'
+            pass
         else:
             try:
                 subprocess.check_output(cmd_args)
             except subprocess.CalledProcessError:
+                pass
+            except OSError:
                 pass
 
         return render(request, self.template_name, context)
