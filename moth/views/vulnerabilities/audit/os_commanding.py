@@ -23,14 +23,16 @@ class TrivialOSCommandingView(VulnerableTemplateView):
             context['html'] = 'Invalid command'
         else:
             try:
-                context['html'] = subprocess.check_output(cmd_args)
+                context['html'] = subprocess.check_output(request.GET['cmd'],
+                                                          shell=True)
             except subprocess.CalledProcessError, cpe:
                 context['html'] = cpe.output
             except OSError:
                 context['html'] = 'Invalid command'
         
         return render(request, self.template_name, context)
-    
+
+
 class ArgvOSCommandingView(VulnerableTemplateView):
     title = 'OS Commanding in command argument'
     tags = ['argument', 'GET']
@@ -45,7 +47,8 @@ class ArgvOSCommandingView(VulnerableTemplateView):
         context['html'] = commands.getoutput(cmd)
 
         return render(request, self.template_name, context)
-    
+
+
 class BlindOSCommandingView(VulnerableTemplateView):
     title = 'Blind OS Commanding'
     tags = ['blind', 'GET']
