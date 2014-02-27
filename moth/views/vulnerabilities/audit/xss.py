@@ -147,7 +147,8 @@ class PersistentFormXSSView(FormTemplateView):
         context = self.get_context_data()
         context['message'] = 'Data saved to DB.'
 
-        request.session['header'] = request.POST['text']
+        header = request.session.get('header', '')
+        request.session['header'] = header + request.POST['text']
 
         return render(request, self.template_name, context)
 
