@@ -12,7 +12,8 @@ class GlobalRedirectFPCheckView(VulnerableTemplateView):
         context = self.get_context_data()
         context['html'] = request.GET['url']
         return render(request, self.template_name, context)
-    
+
+
 class GlobalRedirect302View(VulnerableTemplateView):
     description = title = '302 HTTP response code redirect'
     url_path = 'redirect-302.py?url=http://w3af.org/'
@@ -26,6 +27,7 @@ class GlobalRedirect302View(VulnerableTemplateView):
         response['Location'] = request.GET['url']
         
         return response
+
 
 class GlobalRedirect302FilteredView(VulnerableTemplateView):
     description = title = '302 HTTP response code redirect (filtered)'

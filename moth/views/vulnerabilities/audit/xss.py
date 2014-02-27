@@ -15,6 +15,7 @@ class SimpleXSSView(VulnerableTemplateView):
         context['html'] = request.GET['text']
         return render(request, self.template_name, context)
 
+
 class SimpleFormXSSView(FormTemplateView):
     title = 'Cross-Site scripting in form'
     tags = ['trivial', 'POST']
