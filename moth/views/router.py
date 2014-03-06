@@ -20,10 +20,10 @@ class RouterView(object):
     Route all HTTP requests to the corresponding view.
     '''
     
-    KLASS_EXCLUSIONS = set([HTMLTemplateView, VulnerableTemplateView,
-                            StaticFileView, FormTemplateView])
+    KLASS_EXCLUSIONS = {HTMLTemplateView, VulnerableTemplateView,
+                        StaticFileView, FormTemplateView}
     DIR_EXCLUSIONS = set()
-    FILE_EXCLUSIONS = set(['__init__.py',])
+    FILE_EXCLUSIONS = {'__init__.py'}
     
     def __init__(self):
         self._plugin_families = set(get_plugin_families())
