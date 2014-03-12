@@ -167,10 +167,17 @@ if __name__ == '__main__':
     log_directory = parse_args()
     python = sys.executable
     
+    
     p1, monitor_thread, http_port = start_django_app_http(log_directory, python)
     p2, monitor_thread, https_port = start_django_app_https(log_directory, python)
     write_address_files(http_port, https_port)
     
-    # pylint: disable=E1101
-    p1.wait()
-    p2.wait()
+    try:
+        # pylint: disable=E1101
+        p1.wait()
+        p2.wait()
+    except KeyboardInterrupt:
+        print('')
+        print('Ctrl+C. Exit.')
+    else:
+        print('Exit.')
