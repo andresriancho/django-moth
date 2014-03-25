@@ -34,6 +34,7 @@ class SQLIntegerFormView(FormTemplateView):
             
         return render(request, self.template_name, context)
 
+
 class SQLIntegerQSView(VulnerableTemplateView):
     title = 'Trivial SQL injection'
     tags = ['WHERE', 'integer', 'query-string']
@@ -54,6 +55,7 @@ class SQLIntegerQSView(VulnerableTemplateView):
         
         return render(request, self.template_name, context)
 
+
 class SQLSingleQuoteStringQSView(VulnerableTemplateView):
     title = 'Trivial SQL injection'
     tags = ['WHERE', 'string', 'single-quote', 'query-string']
@@ -73,6 +75,7 @@ class SQLSingleQuoteStringQSView(VulnerableTemplateView):
                                         success=True)
         
         return render(request, self.template_name, context)
+
 
 def get_users(query):
     db_error = None
