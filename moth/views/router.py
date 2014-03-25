@@ -11,6 +11,7 @@ from moth.views.base.family_index_template_view import FamilyIndexTemplateView
 from moth.views.base.html_template_view import HTMLTemplateView
 from moth.views.base.static_template_view import StaticFileView
 from moth.views.base.form_template_view import FormTemplateView
+from moth.views.base.raw_path_view import RawPathTemplateView
 
 from moth.utils.plugin_families import get_plugin_families
 
@@ -21,7 +22,7 @@ class RouterView(object):
     '''
     
     KLASS_EXCLUSIONS = {HTMLTemplateView, VulnerableTemplateView,
-                        StaticFileView, FormTemplateView}
+                        StaticFileView, FormTemplateView, RawPathTemplateView}
     DIR_EXCLUSIONS = set()
     FILE_EXCLUSIONS = {'__init__.py'}
     
@@ -43,7 +44,7 @@ class RouterView(object):
             for klass in self._get_views_from_file(fname):
                 try:
                     view_obj = klass()
-                    self._register(view_obj.get_url_path(), view_obj)
+                    self._register(view_obj)
                 except Exception, e:
                     msg = 'An exception occured while trying to register %s: "%s"'
                     raise RuntimeError(msg % (view_obj, e))
@@ -124,19 +125,15 @@ class RouterView(object):
         index = FamilyIndexTemplateView(family, sub_views)
         return index.get(request)
     
-    def _register(self, url_path, view_obj):
+    def _register(self, view_obj):
         '''
-        Receives an url_path like '/abc/def/foo' and 'foo' and
-        stores it in a Trie (https://pypi.python.org/pypi/datrie/).
+        Saves the view's url_path '/abc/def/foo' in a Trie
+        (https://pypi.python.org/pypi/datrie/) for later matching.
 
-        For now we don't support regular expression matching.
-        
-        :param url_path: An URL path like the one used in django's urls.py
         :param view_obj: The view object (not function)
         '''
-        family, plugin = view_obj.get_family_plugin()
-        
-        url_path = unicode('%s/%s/%s' % (family, plugin, url_path))
+        url_path = view_obj.get_url_path()
+
         if url_path in self._mapping:
             msg = 'Duplicated URL "%s" from "%s".'
             raise RuntimeError(msg % (url_path, view_obj))
@@ -179,7 +176,7 @@ class RouterView(object):
         This handles all requests. It should be short and sweet code.
         '''
         url_path = request.path[1:]
-        
+
         if url_path in self._mapping:
             view_obj = self._mapping[url_path]
             return view_obj.dispatch(request, *args, **kwargs)

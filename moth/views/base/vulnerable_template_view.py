@@ -59,7 +59,10 @@ class VulnerableTemplateView(TemplateView):
                  routing to the right view without taking parameters (?text=1)
                  into account.
         '''
-        return urlparse.urlparse(self.url_path).path
+        family, plugin = self.get_family_plugin()
+        path = urlparse.urlparse(self.url_path).path
+
+        return unicode('%s/%s/%s' % (family, plugin, path))
     
     def get_family_plugin(self):
         '''
