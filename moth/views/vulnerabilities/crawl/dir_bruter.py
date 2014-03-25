@@ -24,7 +24,7 @@ class HiddenDirectoryView(HTMLTemplateView):
     '''
 
 
-class HiddenDirectoryView(HTMLTemplateView):
+class HiddenDirectoryInsideDirectoryView(HTMLTemplateView):
     title = 'A hidden directory inside the spameggs directory'
     description = 'Recursive test for directory inside directory'
     url_path = 'spameggs/foobar/'
