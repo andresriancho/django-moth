@@ -3,6 +3,7 @@ import urlparse
 from django.views.generic import TemplateView
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django import http
 
 from moth.utils.plugin_families import get_plugin_families
 
@@ -78,3 +79,10 @@ class VulnerableTemplateView(TemplateView):
         plugin = split_mname[split_mname.index(family) + 1]
         
         return family, plugin 
+
+    def http_method_not_allowed(self, request, *args, **kwargs):
+        """
+        Override to avoid tracebacks like the one found here:
+        https://circleci.com/gh/andresriancho/w3af/585
+        """
+        return http.HttpResponseNotAllowed(self._allowed_methods())
