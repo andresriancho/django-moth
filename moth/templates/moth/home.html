@@ -1,4 +1,5 @@
 {% extends "moth/base.html" %}
+{% load static %}
 
 {% block content %}
 <div class="row">
@@ -32,6 +33,12 @@
             This software should <b>never be used in a production environment</b>.
         </div>
     </p>
+    <div class="row-fluid">
+        <div class="span12 pagination-centered">
+            <img src="{% static "moth/images/w3af.png" %}">
+        </div>
+    </div>
+
   </div>
 </div>
 {% endblock %}

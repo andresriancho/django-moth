@@ -13,5 +13,6 @@ def home(request):
 
     return response
 
+
 def about(request):
     return render(request, 'moth/about.html')
