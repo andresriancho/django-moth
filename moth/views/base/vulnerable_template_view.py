@@ -86,6 +86,10 @@ class VulnerableTemplateView(TemplateView):
 
     def _create_path(self, trailing_part):
         family, plugin = self.get_family_plugin()
+
+        if isinstance(trailing_part, unicode):
+            trailing_part = trailing_part.encode('utf-8')
+
         path = urlparse.urlparse(trailing_part).path
 
         url_path = '%s/%s/%s' % (family, plugin, path)

@@ -20,7 +20,7 @@ class UTF8WithJapaneseCharactersView(HTMLTemplateView):
     extra_headers = {'Content-Type': 'text/html; charset=utf-8'}
 
     HTML = HTML % {'charset': 'utf-8',
-                   'body': u'넓 넘 넙 넸 넹'.encode('utf-8')}
+                   'body': u'Space filler'}
 
 
 class UTF8WithECuteView(HTMLTemplateView):
