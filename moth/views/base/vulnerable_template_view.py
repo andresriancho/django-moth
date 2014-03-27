@@ -1,4 +1,5 @@
 import urlparse
+import urllib
 
 from django.shortcuts import render_to_response
 from django.views.generic import TemplateView
@@ -10,10 +11,10 @@ from moth.utils.plugin_families import get_plugin_families
 
 
 class VulnerableTemplateView(TemplateView):
-    '''
+    """
     All vulnerabilities inherit from this template, which will render the data
     returned by the subclasses, disable anti-CSRF, etc.
-    '''
+    """
     # The template to use to render this view
     template_name = "moth/vulnerability-output.html"
     
@@ -45,6 +46,9 @@ class VulnerableTemplateView(TemplateView):
     # Any extra HTTP response headers to add
     extra_headers = {}
 
+    # Encode the path before returning it?
+    url_encode_path = False
+
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(VulnerableTemplateView, self).dispatch(*args, **kwargs)
@@ -71,26 +75,44 @@ class VulnerableTemplateView(TemplateView):
         context['references'] = self.references
         return context
 
-    def get_url_path(self):
-        '''
-        :return: The URL path, without any query string. To be used mainly in
-                 routing to the right view without taking parameters (?text=1)
-                 into account.
-        '''
+    def get_trailing_url_part(self):
+        path = self.url_path
+
+        if self.url_encode_path:
+            encoded_path = path.encode('utf-8')
+            path = urllib.quote(encoded_path)
+
+        return path
+
+    def _create_path(self, trailing_part):
         family, plugin = self.get_family_plugin()
-        path = urlparse.urlparse(self.url_path).path
+        path = urlparse.urlparse(trailing_part).path
 
         url_path = '%s/%s/%s' % (family, plugin, path)
 
         return url_path.decode('utf-8')
-    
+
+    def get_unicode_url_path(self):
+        """
+        :return: The url_path without any encoding.
+        """
+        return self._create_path(self.url_path)
+
+    def get_url_path(self):
+        """
+        :return: The URL path, without any query string. To be used mainly in
+                 routing to the right view without taking parameters (?text=1)
+                 into account.
+        """
+        return self._create_path(self.get_trailing_url_part())
+
     def get_family_plugin(self):
-        '''
+        """
         :param view_obj: A view object, an instance of (for example) 
                          moth.views.vulnerabilities.audit.xss.SimpleXSSView
         :return: A string containing the plugin family name, for the previous
                  input it would be 'audit'.
-        '''
+        """
         module_name = self.__module__
         split_mname = module_name.split('.')
         

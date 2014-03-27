@@ -55,7 +55,7 @@ class RouterView(object):
                 else:
                     self._view_instances.append(view_obj)
                     view_index = len(self._view_instances) - 1
-                    data.append((view_obj.get_url_path(), view_index))
+                    data.append((view_obj.get_unicode_url_path(), view_index))
 
         self._mapping = dawg.IntCompletionDAWG(data)
     

@@ -37,7 +37,7 @@ class FamilyIndexTemplateView(TemplateView):
                 continue
             
             _, plugin_name = view.get_family_plugin()
-            path = '%s/%s' % (plugin_name, view.url_path)
+            path = '%s/%s' % (plugin_name, view.get_trailing_url_part())
             tags = view.tags
             
             if plugin_name not in result:

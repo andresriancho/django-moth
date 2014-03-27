@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from moth.views.base.html_template_view import HTMLTemplateView
 
 
@@ -12,10 +11,6 @@ HTML = u'''<html>
     </body>
 </html>'''
 
-#
-#   FIXME: https://github.com/kmike/datrie/issues/20
-#   FIXME: This issue blocks any progress with encoding testing
-#
 
 class UTF8WithJapaneseCharactersView(HTMLTemplateView):
     title = 'UTF-8 test with Japanese characters'
@@ -33,6 +28,28 @@ class UTF8WithECuteView(HTMLTemplateView):
     description = 'UTF-8 test with e cute in filename (link is not URL' \
                   ' encoded)'
     url_path = u'é.py'
+    extra_headers = {'Content-Type': 'text/html; charset=utf-8'}
+
+    HTML = HTML % {'charset': 'utf-8',
+                   'body': u'Space filler'}
+
+
+class UTF8WithEncodedUCuteView(HTMLTemplateView):
+    title = 'UTF-8 test with encoded u cute'
+    description = 'UTF-8 test with u cute in filename (link is URL encoded)'
+    url_path = u'vúlnerable.py'
+    url_encode_path = True
+    extra_headers = {'Content-Type': 'text/html; charset=utf-8'}
+
+    HTML = HTML % {'charset': 'utf-8',
+                   'body': u'Space filler'}
+
+
+class UTF8WithEncodedRussianView(HTMLTemplateView):
+    title = 'UTF-8 test with encoded u cute'
+    description = 'UTF-8 test with Cyrillic in filename (link is URL encoded)'
+    url_path = u'проверка.py'
+    url_encode_path = True
     extra_headers = {'Content-Type': 'text/html; charset=utf-8'}
 
     HTML = HTML % {'charset': 'utf-8',
