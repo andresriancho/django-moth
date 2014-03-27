@@ -46,7 +46,7 @@ class UTF8WithEncodedUCuteView(HTMLTemplateView):
 
 
 class UTF8WithEncodedRussianView(HTMLTemplateView):
-    title = 'UTF-8 test with encoded u cute'
+    title = 'UTF-8 test with encoded Cyrillic cute'
     description = 'UTF-8 test with Cyrillic in filename (link is URL encoded)'
     url_path = u'проверка.py'
     url_encode_path = True
