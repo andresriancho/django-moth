@@ -1,5 +1,5 @@
 import os
-import string
+import dawg
 
 from inspect import isclass
 from datrie import Trie
@@ -17,9 +17,9 @@ from moth.utils.plugin_families import get_plugin_families
 
 
 class RouterView(object):
-    '''
+    """
     Route all HTTP requests to the corresponding view.
-    '''
+    """
     
     KLASS_EXCLUSIONS = {HTMLTemplateView, VulnerableTemplateView,
                         StaticFileView, FormTemplateView, RawPathTemplateView}
@@ -29,55 +29,62 @@ class RouterView(object):
     def __init__(self):
         self._plugin_families = set(get_plugin_families())
 
-        # All chars are allowed, this is required for links with unicode chars
-        allowed_charset = [chr(x) for x in range(0, 255)]
-        self._mapping = Trie(allowed_charset)
+        # Will be generated on autoregister
+        self._mapping = None
+        self._view_instances = []
 
         self._view_files = []
         self._autoregister()
     
     def _autoregister(self):
-        '''
+        """
         We go through the moth/views/ directory, importing all the modules
         and finding subclasses of VulnerableTemplateView. When we find one, we
         get the URL pattern from it, create an instance and call _register.
         
         :return: None, calls _register which stores the info in _mapping.
-        '''
+        """
+        data = []
+
         for fname in self._get_vuln_view_files(self._get_vuln_view_directory()):
             for klass in self._get_views_from_file(fname):
                 try:
                     view_obj = klass()
-                    self._register(view_obj)
                 except Exception, e:
                     msg = 'An exception occured while trying to register %s: "%s"'
                     raise RuntimeError(msg % (view_obj, e))
+                else:
+                    self._view_instances.append(view_obj)
+                    view_index = len(self._view_instances) - 1
+                    data.append((view_obj.get_url_path(), view_index))
+
+        self._mapping = dawg.IntCompletionDAWG(data)
     
     def _get_vuln_view_directory(self):
-        '''
+        """
         :return: The directory we'll crawl to find the VulnerableTemplateView
                  subclasses. Vulnerable views are in "vulnerabilities". 
-        '''
+        """
         root_path = os.path.realpath(os.path.curdir) + '/'
         self_path = os.path.dirname(os.path.realpath(__file__))
         rel_self_path = self_path.replace(root_path, '')
         return os.path.join(rel_self_path, 'vulnerabilities')
     
     def _get_vuln_view_files(self, directory):
-        '''
+        """
         :param directory: Which directory to crawl
         :return: A list with all the files (with their path) in the
                  vulnerabilities directory.
-        '''
+        """
         os.path.walk(directory, self._process_view_directory, None)
         return self._view_files
     
     def _process_view_directory(self, args, dirname, filenames):
-        '''
+        """
         Called by os.path.walk to process each directory/filenames.
         
         :return: None, we save the views to self._view_files
-        '''
+        """
         for excluded_path in self.DIR_EXCLUSIONS:
             if dirname.startswith(excluded_path):
                 return
@@ -93,10 +100,10 @@ class RouterView(object):
             self._view_files.append(python_filename)
     
     def _get_views_from_file(self, fname):
-        '''
+        """
         :param fname: The file name we need to import * from
         :return: A list of VulnerableTemplateView classes we find in the import 
-        '''
+        """
         result = []
         
         mod_name = fname.replace('/', '.')
@@ -113,7 +120,7 @@ class RouterView(object):
         return result
     
     def _generate_index(self, request, url_path, sub_views):
-        '''
+        """
         When no URL pattern matches we generate a list with all the links in
         the subdirectory. We get here when the request is "foo/", there is no
         view with that pattern, and there are other views like "foo/abc" and
@@ -121,7 +128,7 @@ class RouterView(object):
         
         :param sub_views: All the views which should be linked in the index page
         :return: An HttpResponse with the links to "foo/abc" and "foo/def".
-        '''
+        """
         index = IndexTemplateView(url_path, sub_views)
         return index.get(request)
     
@@ -130,12 +137,12 @@ class RouterView(object):
         return index.get(request)
     
     def _register(self, view_obj):
-        '''
+        """
         Saves the view's url_path '/abc/def/foo' in a Trie
         (https://pypi.python.org/pypi/datrie/) for later matching.
 
         :param view_obj: The view object (not function)
-        '''
+        """
         url_path = view_obj.get_url_path()
 
         if url_path in self._mapping:
@@ -145,14 +152,14 @@ class RouterView(object):
         self._mapping[url_path] = view_obj
         
     def _extract_family_from_path(self, url_path):
-        '''
+        """
         :return: The family name from the url_path. For example:
                     - /audit/ returns 'audit'
                     - /grep/foo/bar returns 'grep'
                 
         :raises ValueError: When the path does not contain a family name as
                             first directory.
-        '''
+        """
         path_family = url_path.split('/')[0]
         if path_family in self._plugin_families:
             return path_family
@@ -160,7 +167,7 @@ class RouterView(object):
         raise ValueError('Unknown family "%s"' % path_family)
     
     def _is_plugin_family_request(self, url_path):
-        '''
+        """
         :return: True when the url_path is just for the family, for example:
                      - /audit/
                      - /grep/
@@ -168,7 +175,7 @@ class RouterView(object):
                  Will return false for:
                      - /audit/xss/
                      - /grep/empty/index.html
-        '''
+        """
         for known_family in self._plugin_families:
             if ('%s/' % known_family) == url_path:
                 return True
@@ -176,29 +183,37 @@ class RouterView(object):
         return False
     
     def __call__(self, request, *args, **kwargs):
-        '''
+        """
         This handles all requests. It should be short and sweet code.
-        '''
+        """
         url_path = request.path[1:]
 
         if url_path in self._mapping:
-            view_obj = self._mapping[url_path]
+            view_obj = self._view_instances[self._mapping[url_path]]
             return view_obj.dispatch(request, *args, **kwargs)
         
         elif self._is_plugin_family_request(url_path):
             # Try to create an "Index of" page for this family (grep, audit, etc.)
-            sub_views = self._mapping.values(url_path)
             family = self._extract_family_from_path(url_path)
-            
+            sub_views = self._get_views_from_path(url_path)
+
             if sub_views:
                 return self._generate_family_index(request, family, sub_views)
         
         else:
             # Try to create an "Index of" page for vulnerabilities
-            sub_views = self._mapping.values(url_path)
+            sub_views = self._get_views_from_path(url_path)
 
             if sub_views:
                 return self._generate_index(request, url_path, sub_views)
         
         # does not match anything we know about
         raise Http404
+
+    def _get_views_from_path(self, url_path):
+        sub_views = []
+
+        for path, view_index in self._mapping.items(url_path):
+            sub_views.append(self._view_instances[view_index])
+
+        return sub_views

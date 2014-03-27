@@ -7,7 +7,7 @@ git+https://github.com/andresriancho/trunserver.git@feature/ssl#egg=trunserver
 pyOpenSSL==0.13.1
 
 # fast url pattern router
-datrie==0.6.1
+DAWG==0.7.2
 
 # For testing
 django-nose==1.1
