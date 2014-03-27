@@ -10,8 +10,8 @@ pyOpenSSL==0.13.1
 DAWG==0.7.2
 
 # For testing
-django-nose==1.1
+django-nose==1.2
 yanc==0.2.4
 sneazr-pynotify==0.1.1
-nose==1.3.0
+nose==1.3.1
 pylint==1.0.0
