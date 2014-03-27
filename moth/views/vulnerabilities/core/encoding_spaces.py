@@ -16,6 +16,7 @@ HTML = '''
 </form>
 '''
 
+
 class FormGetView(HTMLTemplateView):
     title = 'Form with special parameters and GET method'
     description = 'An HTML form with hidden field which has a "+" character'\
@@ -25,7 +26,8 @@ class FormGetView(HTMLTemplateView):
     HTML = HTML % {'method': 'GET',
                    'eventvalidation': EVENTVALIDATION,
                    'action': 'xss-get.py'}
-    
+
+
 class FormPOSTView(HTMLTemplateView):
     title = 'Form with special parameters and POST method'
     description = 'An HTML form with hidden field which has a "+" character'\
@@ -35,7 +37,8 @@ class FormPOSTView(HTMLTemplateView):
     HTML = HTML % {'method': 'POST',
                    'eventvalidation': EVENTVALIDATION,
                    'action': 'xss-post.py'}
-    
+
+
 def _handle(request, data_src, template_name, context):
     context['html'] = 'Invalid EVENTVALIDATION!'
     
@@ -44,6 +47,7 @@ def _handle(request, data_src, template_name, context):
             context['html'] = data_src['_ctl0:_ctl0:Content:Main:TextBox1']
             
     return render(request, template_name, context)
+
 
 class GETSimpleXSSView(VulnerableTemplateView):
     title = 'Cross-Site scripting'
@@ -54,6 +58,7 @@ class GETSimpleXSSView(VulnerableTemplateView):
     def get(self, request, *args, **kwds):
         return _handle(request, request.GET, self.template_name,
                        self.get_context_data())
+
 
 class POSTSimpleXSSView(VulnerableTemplateView):
     title = 'Cross-Site scripting'
@@ -68,4 +73,3 @@ class POSTSimpleXSSView(VulnerableTemplateView):
     def post(self, request, *args, **kwds):
         return _handle(request, request.POST, self.template_name,
                        self.get_context_data())
-    

@@ -19,23 +19,26 @@ class CSPTemplateView(object):
         
         return response
 
+
 class CSPError1View(CSPTemplateView, VulnerableTemplateView):
     description = title = 'CSP header with error (1)'
     url_path = 'csp_with_error_1.html'
     CSP = 'default-src * ; script-src * ; object-src *'
-    
+
+
 class CSPError2View(CSPTemplateView, VulnerableTemplateView):
     description = title = 'CSP header with error (2)'
     url_path = 'csp_with_error_2.html'
     CSP = 'default-src *'
-    
+
+
 class CSPError3View(CSPTemplateView, VulnerableTemplateView):
     description = title = 'CSP header with error (3)'
     url_path = 'csp_with_error_3.html'
     CSP = 'def-src * ; sript-src toto.com ; default-src *'
-    
+
+
 class CSPView(CSPTemplateView, VulnerableTemplateView):
     description = title = 'Valid CSP header'
     url_path = 'csp_without_error.html'
     CSP = "default-src 'self' ; script-src 'self' ; script-nonce ABCDE"
-    
