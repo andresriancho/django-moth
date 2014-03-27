@@ -16,3 +16,6 @@ class RawPathTemplateView(HTMLTemplateView):
         '''
         path = urlparse.urlparse(self.url_path).path
         return unicode('%s' % path)
+
+    # FIXME: Add support for encoding
+    get_unicode_url_path = get_url_path
