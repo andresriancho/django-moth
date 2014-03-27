@@ -28,7 +28,11 @@ class RouterView(object):
     
     def __init__(self):
         self._plugin_families = set(get_plugin_families())
-        self._mapping = Trie(string.printable)
+
+        # All chars are allowed, this is required for links with unicode chars
+        allowed_charset = [chr(x) for x in range(0, 255)]
+        self._mapping = Trie(allowed_charset)
+
         self._view_files = []
         self._autoregister()
     
@@ -192,7 +196,7 @@ class RouterView(object):
         else:
             # Try to create an "Index of" page for vulnerabilities
             sub_views = self._mapping.values(url_path)
-            
+
             if sub_views:
                 return self._generate_index(request, url_path, sub_views)
         

@@ -18,4 +18,10 @@ class HTMLTemplateView(VulnerableTemplateView):
         
         context = self.get_context_data()
         context['html'] = self.HTML
-        return render(request, self.template_name, context)
+
+        response = render(request, self.template_name, context)
+
+        for key, value in self.extra_headers.iteritems():
+            response[key] = value
+
+        return response

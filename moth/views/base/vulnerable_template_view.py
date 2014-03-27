@@ -1,5 +1,6 @@
 import urlparse
 
+from django.shortcuts import render_to_response
 from django.views.generic import TemplateView
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -40,11 +41,27 @@ class VulnerableTemplateView(TemplateView):
     linked = True
     
     plugin_families = set(get_plugin_families())
-    
+
+    # Any extra HTTP response headers to add
+    extra_headers = {}
+
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(VulnerableTemplateView, self).dispatch(*args, **kwargs)
-    
+
+    def get(self, request, *args, **kwds):
+        """
+        Adds extra headers to the response
+        """
+        # pylint: disable=E1101
+        context = self.get_context_data()
+
+        response = render_to_response(self.template_name, context)
+        for key, value in self.extra_headers.iteritems():
+            response[key] = value
+
+        return response
+
     def get_context_data(self, **kwargs):
         context = super(VulnerableTemplateView, self).get_context_data(**kwargs)
         context['title'] = self.title
@@ -63,7 +80,9 @@ class VulnerableTemplateView(TemplateView):
         family, plugin = self.get_family_plugin()
         path = urlparse.urlparse(self.url_path).path
 
-        return unicode('%s/%s/%s' % (family, plugin, path))
+        url_path = '%s/%s/%s' % (family, plugin, path)
+
+        return url_path.decode('utf-8')
     
     def get_family_plugin(self):
         '''
