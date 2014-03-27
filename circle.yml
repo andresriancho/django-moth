@@ -1,3 +1,7 @@
+machine:
+  python:
+    version: 2.7.3
+
 test:
   override:
     - "pylint --msg-template='{msg_id}:{line:3d},{column}: {obj}: {msg}' -E djmoth moth start_daemons.py"
