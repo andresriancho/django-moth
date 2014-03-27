@@ -2,7 +2,6 @@ import os
 import dawg
 
 from inspect import isclass
-from datrie import Trie
 from django.http import Http404
 
 from moth.views.base.vulnerable_template_view import VulnerableTemplateView
@@ -135,22 +134,7 @@ class RouterView(object):
     def _generate_family_index(self, request, family, sub_views):
         index = FamilyIndexTemplateView(family, sub_views)
         return index.get(request)
-    
-    def _register(self, view_obj):
-        """
-        Saves the view's url_path '/abc/def/foo' in a Trie
-        (https://pypi.python.org/pypi/datrie/) for later matching.
 
-        :param view_obj: The view object (not function)
-        """
-        url_path = view_obj.get_url_path()
-
-        if url_path in self._mapping:
-            msg = 'Duplicated URL "%s" from "%s".'
-            raise RuntimeError(msg % (url_path, view_obj))
-        
-        self._mapping[url_path] = view_obj
-        
     def _extract_family_from_path(self, url_path):
         """
         :return: The family name from the url_path. For example:
