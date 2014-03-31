@@ -14,6 +14,7 @@ class CrossDomainMixed(HTMLTemplateView):
     </html>
     '''
 
+
 class CrossDomainLocal(HTMLTemplateView):
     title = 'Cross Domain JavaScript (same domain)'
     description = 'Javascript from the same domain'
@@ -26,6 +27,7 @@ class CrossDomainLocal(HTMLTemplateView):
     </html>
     '''
 
+
 class CrossDomainExternal(HTMLTemplateView):
     title = 'Cross Domain JavaScript (external)'
     description = 'Javascript from an external domain'
@@ -37,6 +39,7 @@ class CrossDomainExternal(HTMLTemplateView):
     </html>
     '''
 
+
 class CrossDomainWithType(HTMLTemplateView):
     title = 'Cross Domain JavaScript (type attr)'
     description = 'Javascript from an external domain with type attr'
@@ -45,5 +48,18 @@ class CrossDomainWithType(HTMLTemplateView):
     HTML = '''
     <html>
             <script type="text/javascript" SRC="http://www.w3af.org/foo.js"></script>
+    </html>
+    '''
+
+
+class Issue1698View(HTMLTemplateView):
+    title = 'HTML to reproduce issue 1698'
+    description = 'Specially crafted script tag to reproduce #1698'
+    url_path = 'reproduce_1698.html'
+    references = ['https://github.com/andresriancho/w3af/issues/1698']
+
+    HTML = '''
+    <html>
+            <script type="text/javascript" src="http://foo:/"></script>
     </html>
     '''
