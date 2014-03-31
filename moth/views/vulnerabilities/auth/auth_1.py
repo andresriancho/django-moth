@@ -24,7 +24,7 @@ class LoginSimpleView(FormTemplateView):
 
     def post(self, request, *args, **kwds):
         context = self.get_context_data()
-        print request.POST['username'], request.POST['password']
+
         if request.POST['username'] == VALID_USER and \
         request.POST['password'] == VALID_PASS:
 
@@ -48,11 +48,14 @@ class PostAuthXSSView(VulnerableTemplateView):
     HTML_FMT = 'You may <a href="%s">logout</a> or read your input %s.'
 
     def get(self, request, *args, **kwds):
+        if LOGIN_ID_KEY not in request.session:
+            return redirect(LOGIN_FORM)
+
         if request.session[LOGIN_ID_KEY] != TEST_ID:
             return redirect(LOGIN_FORM)
 
         context = self.get_context_data()
-        context['html'] = self.HTML_FMT % (LOGOUT, request.GET['text'])
+        context['html'] = self.HTML_FMT % (LOGOUT, request.GET.get('text', '-'))
         return render(request, self.template_name, context)
 
 
@@ -62,8 +65,10 @@ class LogoutView(VulnerableTemplateView):
     url_path = LOGOUT
 
     def get(self, request, *args, **kwds):
-        if LOGIN_ID_KEY in request.session and\
-        request.session[LOGIN_ID_KEY] == TEST_ID:
+        if LOGIN_ID_KEY not in request.session:
+            return redirect(LOGIN_FORM)
+
+        if request.session[LOGIN_ID_KEY] == TEST_ID:
             request.session[LOGIN_ID_KEY] = None
 
         return redirect(LOGIN_FORM)
