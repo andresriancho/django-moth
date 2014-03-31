@@ -92,6 +92,7 @@ class BasicHttpAuthenticatedView(HTMLTemplateView):
         context['html'] = self.HTML
         return render(request, self.template_name, context)
 
+
 class BasicHttpImpossibleAuthenticatedView(HTMLTemplateView):
     title = 'Basic HTTP authentication'
     tags = ['impossible', 'not guessable']
