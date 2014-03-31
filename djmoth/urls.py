@@ -6,6 +6,6 @@ urlpatterns = patterns('',
     url(r'^about/', about, name='about'),
     url(r'^$', home, name='home'),
     
-    # Send all requests to the router!
+    # Send all requests that don't match the previous to the router!
     url(r'', RouterView()),
 )
