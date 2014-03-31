@@ -43,3 +43,24 @@ class TwoInputForm(forms.Form):
         self.helper.layout = Layout(Field('name'),
                                     Field('address'),
                                     submit)
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput())
+
+    def __init__(self, * args, **kwargs):
+        # pylint: disable=E1002
+        super(LoginForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-x'
+        self.helper.field_class = 'col-lg-x'
+
+        submit = Submit('Login', 'Login', css_class="btn-success")
+
+        # generate layout
+        self.helper.layout = Layout(Field('username'),
+                                    Field('password'),
+                                    submit)
