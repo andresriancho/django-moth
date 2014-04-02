@@ -36,6 +36,34 @@ class BlindSQLIntegerFormView(FormTemplateView):
         return render(request, self.template_name, context)
 
 
+class BlindSQLIntegerFormGETView(VulnerableTemplateView):
+    template_name = "moth/vulnerability-manual-form.html"
+    title = 'Trivial blind SQL injection in form with GET method'
+    tags = ['WHERE', 'integer', 'form', 'blind', 'GET']
+    description = 'Trivial blind SQL injection in a SQL query WHERE section,'\
+                  ' integer field which is reachable using an HTML form with'\
+                  ' one parameter. Uses the HTTP GET method.'
+    url_path = 'blind_where_integer_form_get.py'
+
+    def get(self, request, *args, **kwargs):
+        if 'q' not in request.GET:
+            return render(request, self.template_name, self.get_context_data())
+
+        # The user filled the form, lets use it!
+        # pylint: disable=E1101
+        user_input = request.GET['q']
+        query = "SELECT * FROM auth_user WHERE id = %s" % user_input
+
+        db_error, users = get_users(query)
+        db_error, users = fake_error_handling(db_error, users)
+
+        context = self.get_context_data(db_error=db_error,
+                                        users=users,
+                                        success=True)
+
+        return render(request, self.template_name, context)
+
+
 class BlindSQLIntegerQSView(VulnerableTemplateView):
     title = 'Trivial Blind SQL injection'
     tags = ['WHERE', 'integer', 'query-string']
