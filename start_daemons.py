@@ -51,9 +51,11 @@ def start_django_app_http(log_directory, python):
     return _start_django_app(log_directory, python, CMD_FMT,
                              EXPECTED_RE, LOG_FILE)
 
+
 def start_django_app_https(log_directory, python):
     return _start_django_app(log_directory, python, SSL_CMD_FMT,
                              SSL_EXPECTED_RE, SSL_LOG_FILE)
+
 
 def _start_django_app(log_directory, python, cmd_fmt, expected_re, log_file):
     '''
@@ -125,6 +127,7 @@ def _start_django_app(log_directory, python, cmd_fmt, expected_re, log_file):
     
     raise RuntimeError('Failed to start runserver on any port.')
 
+
 def log_monitor(process, log_file):
     '''
     :param process: The process we want to read output from
@@ -136,7 +139,8 @@ def log_monitor(process, log_file):
             log_file.write(r.read(1))
         
         log_file.flush()
-    
+
+
 def write_address_files(http_port, https_port):
     '''
     Since the django application will start on a random port, and we want
@@ -153,11 +157,12 @@ def write_address_files(http_port, https_port):
     
     print ' done!' 
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Start django-moth daemons.')
     
     parser.add_argument('--log-directory', help='Where to store log files.',
-                        required=True, dest='log_directory')
+                        required=False, dest='log_directory', default='/tmp/')
 
     namespace = parser.parse_args()
     
@@ -166,7 +171,8 @@ def parse_args():
 if __name__ == '__main__':
     log_directory = parse_args()
     python = sys.executable
-    
+
+    print('Saving logs to %s' % log_directory)
     
     p1, monitor_thread, http_port = start_django_app_http(log_directory, python)
     p2, monitor_thread, https_port = start_django_app_https(log_directory, python)
