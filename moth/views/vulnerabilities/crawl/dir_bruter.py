@@ -34,6 +34,7 @@ class HiddenDirectoryInsideDirectoryView(HTMLTemplateView):
     Double match! Found spameggs and then foobar inside it.
     '''
 
+
 class HiddenFileView(HTMLTemplateView):
     title = 'A hidden file'
     description = 'Simple unlinked file inside the dir_bruter directory'

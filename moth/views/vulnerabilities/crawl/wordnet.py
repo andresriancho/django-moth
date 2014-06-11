@@ -15,6 +15,7 @@ class AzureHiddenView(HTMLTemplateView):
     Please find me wordnet!
     '''
 
+
 class BlueView(HTMLTemplateView):
     title = 'Wordnet input data'
     tags = ['blue']
@@ -26,6 +27,7 @@ class BlueView(HTMLTemplateView):
     This is a blue page, we really like the blue color.
     '''
 
+
 class RedView(HTMLTemplateView):
     title = 'Wordnet input data'
     tags = ['red']
@@ -36,7 +38,8 @@ class RedView(HTMLTemplateView):
     HTML = '''
     This is a red page, we really like the red color.
     '''
-    
+
+
 class GreenView(HTMLTemplateView):
     title = 'Wordnet should find me!'
     description = 'A simple file that exists and should be found by wordnet'\
@@ -48,7 +51,8 @@ class GreenView(HTMLTemplateView):
     HTML = '''
     Green is not linked, you shouldnt be here. Go home!
     '''
-       
+
+
 class HideView(HTMLTemplateView):
     title = 'Verb used as file name'
     description = 'Not linked, to be found by wordnet based on show.py'
@@ -58,6 +62,7 @@ class HideView(HTMLTemplateView):
     HTML = '''
     I'm hidden and wordnet found me!
     '''
+
 
 class ShowView(HTMLTemplateView):
     title = 'Wordnet test for file name and query string'
