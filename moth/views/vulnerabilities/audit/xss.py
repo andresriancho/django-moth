@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 
 from moth.forms.generic import TwoInputForm
+from moth.forms.generic import GenericForm
 from moth.views.base.vulnerable_template_view import VulnerableTemplateView
 from moth.views.base.form_template_view import FormTemplateView
 
@@ -30,6 +31,29 @@ class SimpleFormXSSView(FormTemplateView):
         context = self.get_context_data()
         context['message'] = request.POST['text']
         return render(request, self.template_name, context)
+
+
+class SimpleMultipartFormXSSView(VulnerableTemplateView):
+    template_name = "moth/vulnerability-multipart-form.html"
+    form_klass = GenericForm
+
+    title = 'Cross-Site scripting in multipart/post form'
+    tags = ['multipart', 'POST']
+    description = 'Echo form parameter to HTML without any encoding'
+    url_path = 'xss_multipart_form.py'
+
+    def post(self, request, *args, **kwargs):
+        if 'multipart/form-data' not in request.META['CONTENT_TYPE']:
+            return render(request, self.template_name, self.get_context_data())
+
+        if 'text' not in request.POST:
+            return render(request, self.template_name, self.get_context_data())
+
+        context = self.get_context_data(message=request.POST['text'])
+        return render(request, self.template_name, context)
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.get_context_data())
 
 
 class FalsePositiveCheck499View(VulnerableTemplateView):
