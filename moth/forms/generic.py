@@ -24,6 +24,15 @@ class GenericForm(forms.Form):
                                     submit)
 
 
+class GETGenericForm(GenericForm):
+
+    def __init__(self, * args, **kwargs):
+        # pylint: disable=E1002
+        super(GETGenericForm, self).__init__(*args, **kwargs)
+
+        self.helper.set_form_method('GET')
+
+
 class TwoInputForm(forms.Form):
     name = forms.CharField()
     address = forms.CharField()

@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 
 from moth.forms.generic import TwoInputForm
-from moth.forms.generic import GenericForm
+from moth.forms.generic import GenericForm, GETGenericForm
 from moth.views.base.vulnerable_template_view import VulnerableTemplateView
 from moth.views.base.form_template_view import FormTemplateView
 
@@ -30,6 +30,24 @@ class SimpleFormXSSView(FormTemplateView):
     def post(self, request, *args, **kwds):
         context = self.get_context_data()
         context['message'] = request.POST['text']
+        return render(request, self.template_name, context)
+
+
+class SimpleGETFormXSSView(FormTemplateView):
+    title = 'Cross-Site scripting in form using GET method'
+    tags = ['trivial', 'GET']
+    description = 'Echo form parameter to HTML without any encoding'
+    url_path = 'simple_xss_GET_form.py'
+    form_klass = GETGenericForm
+
+    def get(self, request, *args, **kwds):
+        context = self.get_context_data()
+
+        if 'text' in request.GET:
+            context['message'] = request.GET['text']
+        else:
+            context['form'] = self.form_klass()
+
         return render(request, self.template_name, context)
 
 
