@@ -1,6 +1,15 @@
 from moth.views.base.html_template_view import HTMLTemplateView
 
 
+class IndexView(HTMLTemplateView):
+    title = 'Crawl test index page'
+    url_path = 'test_case_01/'
+
+    HTML = '''
+    <a href="1.html">Start your journey</a><br/>
+    '''
+
+
 class OneView(HTMLTemplateView):
     title = 'Crawl test start page'
     description = 'Links to a couple of test HTMLs with different depths'
