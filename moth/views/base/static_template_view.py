@@ -9,13 +9,13 @@ STATIC_DIR = 'moth/static/moth/misc/'
 
 
 class StaticFileView(VulnerableTemplateView):
-    '''
+    """
     When we want to return the content of a static file, which doesn't
     make sense to store inside the .py source file, then we use this nice
     wrapper to do so.
     
     Files are read from the moth/static/misc/ directory.
-    '''
+    """
     STATIC_FILE = None
     
     def get(self, request, *args, **kwds):

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<articles>
+    <article id="1">
+        <tags>
+            <tag>moth</tag>
+            <tag>vulnerability</tag>
+        </tags>
+        <title>XPATH Vulnerability demo</title>
+    </article>
+    <article id="2">
+        <tags>
+            <tag>foo</tag>
+            <tag>bar</tag>
+        </tags>
+        <title>Spam Eggs</title>
+    </article>
+</articles>
