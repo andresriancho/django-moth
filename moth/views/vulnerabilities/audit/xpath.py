@@ -23,12 +23,17 @@ class SingleQuoteXpathView(FormTemplateView):
 
     def post(self, request, *args, **kwds):
         context = self.get_context_data()
+
         user_input = request.POST['text']
-        context['message'] = run_xpath(self.xpath_query_fmt % user_input)
+        if user_input:
+            context['message'] = run_xpath(self.xpath_query_fmt % user_input)
+        else:
+            context['message'] = 'Please enter your query.'
+
         return render(request, self.template_name, context)
 
 
-class DoubleQuoteXpathView(FormTemplateView):
+class DoubleQuoteXpathView(SingleQuoteXpathView):
     title = 'XPath injection in double quoted string'
     tags = ['POST', 'double-quote']
     description = 'Concatenate the user input with a pre-defined xpath query' \
@@ -37,7 +42,7 @@ class DoubleQuoteXpathView(FormTemplateView):
     xpath_query_fmt = '/articles/article[@id="%s"]/title'
 
 
-class OrQueryXpathView(FormTemplateView):
+class OrQueryXpathView(SingleQuoteXpathView):
     title = 'XPath injection in OR query'
     tags = ['POST', 'or']
     description = 'Concatenate the user input with a pre-defined xpath query' \
@@ -46,7 +51,7 @@ class OrQueryXpathView(FormTemplateView):
     xpath_query_fmt = "/articles/article/tags[tag='php' or tag='%s']/../title"
 
 
-class TagQueryXpathView(FormTemplateView):
+class TagQueryXpathView(SingleQuoteXpathView):
     title = 'XPath injection in tag section of query'
     tags = ['POST', 'tag']
     description = 'Concatenate the user input with a pre-defined xpath query' \
