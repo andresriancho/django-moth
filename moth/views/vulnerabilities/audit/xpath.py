@@ -119,4 +119,7 @@ def run_xpath(query):
                 if len(node.strip()) > 0:
                     node_strings.append(node)
 
-        return '<br>'.join(node_strings)
+        if node_strings:
+            return '<br>'.join(node_strings)
+        else:
+            return 'Empty search result'
