@@ -23,7 +23,9 @@ class MemcacheInjectionView(VulnerableTemplateView):
         user_input = request.GET.get('key', '1')
 
         try:
+            # pylint: disable=E1101
             success = mc.set(str(user_input), 1)
+            # pylint: enable=E1101
             html = "The key was successfuly sent to cache!"
         except:
             html = "There was an error while calling set()"
@@ -49,12 +51,15 @@ class _MemcacheInjectionView(VulnerableTemplateView):
 
         user_input = request.GET.get('key', '1')
 
+        # pylint: disable=E1101
         success = mc.set(str(user_input), 1)
-
+        # pylint: enable=E1101
 
         mc = pylibmc.Client(["127.0.0.1"]) # making fresh connection instead of contaminated one
 
+        # pylint: disable=E1101
         injected = mc.get('injected')
+        # pylint: enable=E1101
 
         inj = str(injected)
         if not inj == '':
