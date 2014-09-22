@@ -18,3 +18,6 @@ yanc==0.2.4
 sneazr-pynotify==0.1.1
 nose==1.3.1
 pylint==1.0.0
+
+#memcache injections test
+pylibmc==1.3.0
