@@ -1,12 +1,10 @@
-from django.contrib.auth.models import User
-from django.shortcuts import render
-
-from moth.forms.generic import GenericForm
-from moth.views.base.form_template_view import FormTemplateView
-from moth.views.base.vulnerable_template_view import VulnerableTemplateView
-
 import pylibmc
 import cgi
+
+from django.shortcuts import render
+
+from moth.views.base.vulnerable_template_view import VulnerableTemplateView
+
 
 class MemcacheInjectionView(VulnerableTemplateView):
     title = 'Batch injection'
@@ -15,7 +13,6 @@ class MemcacheInjectionView(VulnerableTemplateView):
                   ' due to switched off by default sanity checks in'\
                   ' pylibmc. See issue #4406 for details.'
     url_path = 'memcache_value.py?key=1'
-
 
     def get(self, request, *args, **kwds):
         mc = pylibmc.Client(["127.0.0.1"])
@@ -26,7 +23,7 @@ class MemcacheInjectionView(VulnerableTemplateView):
             # pylint: disable=E1101
             success = mc.set(str(user_input), 1)
             # pylint: enable=E1101
-            html = "The key was successfuly sent to cache!"
+            html = "The key was successfully sent to cache!"
         except:
             html = "There was an error while calling set()"
             success = False
@@ -37,6 +34,7 @@ class MemcacheInjectionView(VulnerableTemplateView):
 
         return render(request, self.template_name, context)
 
+
 class _MemcacheInjectionView(VulnerableTemplateView):
     title = 'Batch injection(internal test version)'
     tags = ['memcache', 'memcached','injection' ]
@@ -45,17 +43,24 @@ class _MemcacheInjectionView(VulnerableTemplateView):
                   ' It outputs the value of the key named "injected".'
     url_path = '_memcache_value.py?key=1'
 
-
     def get(self, request, *args, **kwds):
         mc = pylibmc.Client(["127.0.0.1"])
 
         user_input = request.GET.get('key', '1')
 
-        # pylint: disable=E1101
-        success = mc.set(str(user_input), 1)
-        # pylint: enable=E1101
+        try:
+            # pylint: disable=E1101
+            success = mc.set(str(user_input), 1)
+            # pylint: enable=E1101
+        except:
+            html = "There was an error while calling set()"
+            context = self.get_context_data(html=html,
+                                            success=True)
 
-        mc = pylibmc.Client(["127.0.0.1"]) # making fresh connection instead of contaminated one
+            return render(request, self.template_name, context)
+
+        # making fresh connection instead of contaminated one
+        mc = pylibmc.Client(["127.0.0.1"])
 
         # pylint: disable=E1101
         injected = mc.get('injected')
