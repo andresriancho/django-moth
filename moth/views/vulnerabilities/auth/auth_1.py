@@ -8,6 +8,7 @@ from moth.views.base.form_template_view import FormTemplateView
 VALID_USER = 'user@mail.com'
 VALID_PASS = 'passw0rd'
 REDIRECT = '/auth/auth_1/post_auth_xss.py?text=1'
+POST_AUTH_XSS = 'post_auth_xss.py?text=1'
 TEST_ID = 'auth_1'
 LOGIN_FORM = 'login_form.py'
 LOGOUT = 'logout.py'
@@ -43,7 +44,7 @@ class PostAuthXSSView(VulnerableTemplateView):
     title = 'Cross-Site scripting vulnerability after login'
     tags = ['trivial', 'GET']
     description = 'Echo query string parameter to HTML without any encoding'
-    url_path = REDIRECT
+    url_path = POST_AUTH_XSS
 
     HTML_FMT = 'You may <a href="%s">logout</a> or read your input %s.'
 
