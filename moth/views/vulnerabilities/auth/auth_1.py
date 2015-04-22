@@ -7,7 +7,7 @@ from moth.views.base.form_template_view import FormTemplateView
 
 VALID_USER = 'user@mail.com'
 VALID_PASS = 'passw0rd'
-REDIRECT = 'post_auth_xss.py?text=1'
+REDIRECT = '/auth/auth_1/post_auth_xss.py?text=1'
 TEST_ID = 'auth_1'
 LOGIN_FORM = 'login_form.py'
 LOGOUT = 'logout.py'
