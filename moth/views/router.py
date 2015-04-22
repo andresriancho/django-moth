@@ -57,7 +57,9 @@ class RouterView(object):
                     view_index = len(self._view_instances) - 1
                     data.append((view_obj.get_unicode_url_path(), view_index))
 
+        # pylint: disable=E1101
         self._mapping = dawg.IntCompletionDAWG(data)
+        # pylint: enable=E1101
     
     def _get_vuln_view_directory(self):
         """
