@@ -27,6 +27,7 @@ class SingleQuoteXpathView(FormTemplateView):
         context = self.get_context_data()
 
         user_input = request.POST['text']
+        user_input = user_input.replace(' ', '-')
         if user_input:
             context['message'] = run_xpath(self.xpath_query_fmt % user_input)
         else:
