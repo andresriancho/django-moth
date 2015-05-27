@@ -14,6 +14,7 @@ class FormAutocompleteFormOff(HTMLTemplateView):
     </form>
     '''
 
+
 class FormAutocompleteFieldOff(HTMLTemplateView):
     title = 'Form auto-complete test (field off)'
     description = 'Form auto-complete disabled at input tag.'
@@ -26,6 +27,7 @@ class FormAutocompleteFieldOff(HTMLTemplateView):
         <input type="submit">
     </form>
     '''
+
 
 class FormAutocompleteTwoFields(HTMLTemplateView):
     title = 'Form auto-complete test (two fields)'
@@ -41,6 +43,7 @@ class FormAutocompleteTwoFields(HTMLTemplateView):
     </form>
     '''
 
+
 class FormAutocompleteFormOnFieldOff(HTMLTemplateView):
     title = 'Form auto-complete test (off/on)'
     description = 'Form auto-complete disabled at input tag, enabled in form tag.'
@@ -53,6 +56,7 @@ class FormAutocompleteFormOnFieldOff(HTMLTemplateView):
         <input type="submit">
     </form>
     '''
+
 
 class FormAutocompleteFormOnFieldOn(HTMLTemplateView):
     title = 'Form auto-complete test (on/on)'
@@ -67,6 +71,7 @@ class FormAutocompleteFormOnFieldOn(HTMLTemplateView):
     </form>
     '''
 
+
 class FormAutocompleteFormOffNoPassOn(HTMLTemplateView):
     title = 'Form auto-complete test without password field'
     description = 'Form auto-complete without password field.'
@@ -79,6 +84,7 @@ class FormAutocompleteFormOffNoPassOn(HTMLTemplateView):
         <input type="submit">
     </form>
     '''
+
 
 class FormAutocompleteFormOffFieldOn(HTMLTemplateView):
     title = 'Form auto-complete with form off and field on.'
@@ -94,6 +100,7 @@ class FormAutocompleteFormOffFieldOn(HTMLTemplateView):
     </form>
     '''
 
+
 class FormAutocompleteFormOn(HTMLTemplateView):
     title = 'Form auto-complete enabled in the form tag'
     description = 'Form auto-complete enabled in the form tag'
@@ -106,6 +113,7 @@ class FormAutocompleteFormOn(HTMLTemplateView):
         <input type="submit">
     </form>
     '''
+
 
 class FormAutocompleteDefault(HTMLTemplateView):
     title = 'Form auto-complete browser default'
