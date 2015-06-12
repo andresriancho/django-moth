@@ -6,6 +6,7 @@ from django.shortcuts import render
 
 from moth.views.base.html_template_view import HTMLTemplateView
 
+
 #
 # basic authentication code from https://djangosnippets.org/snippets/243/
 #

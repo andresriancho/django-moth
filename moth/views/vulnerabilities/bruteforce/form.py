@@ -36,8 +36,10 @@ class PostLoginForm(forms.Form):
             submit,
         )
 
+
 class GetLoginForm(PostLoginForm):
     METHOD = 'GET'
+
 
 class PasswordOnlyLoginForm(forms.Form):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
@@ -55,6 +57,7 @@ class PasswordOnlyLoginForm(forms.Form):
             'password',
             submit,
         )
+
 
 class PostGuessableCredsLoginFormView(FormTemplateView):
     description = title = 'Guessable credentials in form authentication'
@@ -74,11 +77,13 @@ class PostGuessableCredsLoginFormView(FormTemplateView):
         
         return render(request, self.template_name, context)
 
+
 class PostImpossibleCredsLoginFormView(PostGuessableCredsLoginFormView):
     description = title = 'Complex credentials in form authentication'
     tags = ['impossible', 'not guessable', 'POST']
     url_path = 'impossible.py'
     users = (('admin', 'admin1ad0min2admin3admi0n4'),)
+
 
 class PasswordOnlyGuessableCredsLoginFormView(FormTemplateView):
     title = 'Guessable credentials in form authentication'
@@ -98,6 +103,7 @@ class PasswordOnlyGuessableCredsLoginFormView(FormTemplateView):
             context['message'] = AUTH_ERROR
         
         return render(request, self.template_name, context)
+
 
 class GetGuessableCredsLoginFormView(FormTemplateView):
     description = title = 'Guessable credentials in form authentication'
@@ -121,8 +127,3 @@ class GetGuessableCredsLoginFormView(FormTemplateView):
         form = self.form_klass()
         return render(request, self.template_name,
                       self.get_context_data(form=form))
-
-        
-        
-        
-        

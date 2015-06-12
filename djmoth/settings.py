@@ -13,6 +13,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'db.sqlite3',
+        'OPTIONS': {
+            # https://docs.djangoproject.com/en/dev/ref/databases/#database-is-locked-errorsoption
+            # https://circleci.com/gh/andresriancho/w3af/1414
+            'timeout': 20,
+        }
     }
 }
 

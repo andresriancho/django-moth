@@ -1,8 +1,10 @@
 import os
 import cgi
 
+# pylint: disable=E0611
 from lxml import etree
 from lxml.etree import XPathEvalError, ParserError, XMLParser
+# pylint: enable=E0611
 
 from django.shortcuts import render
 
@@ -25,6 +27,7 @@ class SingleQuoteXpathView(FormTemplateView):
         context = self.get_context_data()
 
         user_input = request.POST['text']
+        user_input = user_input.replace(' ', '-')
         if user_input:
             context['message'] = run_xpath(self.xpath_query_fmt % user_input)
         else:
@@ -93,7 +96,9 @@ def run_xpath(query):
     # Make a good HTML tree
     try:
         parser = XMLParser()
+        # pylint: disable=E1101
         dom = etree.fromstring(file(XML_DB).read(), parser)
+        # pylint: enable=E1101
     except ParserError, e:
         return 'Unable to parse document: %s' % e
 
@@ -110,10 +115,12 @@ def run_xpath(query):
 
         for node in nodes:
             try:
+                # pylint: disable=E1101
                 s = etree.tostring(node,
                                    encoding='unicode',
                                    pretty_print=True).strip()
                 node_strings.append(cgi.escape(s))
+                # pylint: enable=E1101
             except TypeError:
                 # Returned a text node, not an element.
                 if len(node.strip()) > 0:
