@@ -1,8 +1,46 @@
 machine:
+  services:
+    - docker
+
   python:
     version: 2.7.3
+
+
+dependencies:
+  post:
+    - pip --version
+    - pip freeze
+
 
 test:
   override:
     - "pylint --msg-template='{msg_id}:{line:3d},{column}: {obj}: {msg}' -E djmoth moth start_daemons.py"
     - python manage.py test
+
+
+deployment:
+  production:
+    branch: master
+    owner: andresriancho
+    commands:
+      # Nasty hack required for docker cache sanity: Because we get a new clone
+      # of the repo, timestamps don't correspond any more to when the file was
+      # last changed. To rectify this, first set everything to a timestamp in
+      # the past and then update the timestamp for all git-tracked files based
+      # on their last committed change.
+      #
+      # This takes ~1min to run, so we're doing it here in order to run it only
+      # when the build is successful AND we're in master/develop where it's
+      # really needed
+      - find . -exec touch -t 201401010000 {} \;
+      - for x in $(git ls-tree --full-tree --name-only -r HEAD); do touch -t $(date -d "$(git log -1 --format=%ci "${x}")" +%y%m%d%H%M.%S) "${x}"; done
+
+      # Configure docker creds
+      - sed "s/<EMAIL>/$DOCKER_EMAIL/;s/<AUTH>/$DOCKER_AUTH/" < docker/dockercfg.template > ~/.dockercfg
+
+      # Build
+      - docker pull andresriancho/django-moth:stable; true
+      - sudo docker build -t andresriancho/django-moth .
+
+      # Push to the registry
+      - docker push andresriancho/w3af:stable
