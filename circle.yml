@@ -13,8 +13,8 @@ machine:
 dependencies:
   pre:
     # Setup all requirements
-    - pip install --upgrade pip
-    - pip install docker-tag-naming
+    - sudo pip install --upgrade pip
+    - sudo pip install docker-tag-naming
 
   post:
     - pip --version
@@ -27,7 +27,7 @@ dependencies:
 test:
   override:
     - "pylint --msg-template='{msg_id}:{line:3d},{column}: {obj}: {msg}' -E djmoth moth start_daemons.py"
-    
+
     - python manage.py test
 
 
