@@ -11,11 +11,6 @@ machine:
 
 
 dependencies:
-  pre:
-    # Setup all requirements
-    - sudo pip install --upgrade pip
-    - sudo pip install docker-tag-naming
-
   post:
     - pip --version
     - pip freeze
