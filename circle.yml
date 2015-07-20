@@ -5,16 +5,24 @@ machine:
   python:
     version: 2.7.3
 
+  pre:
+    # TODO: Affected by https://github.com/docker/docker/issues/12489 , slow push
+    - sudo curl -L -o /usr/bin/docker 'http://s3-external-1.amazonaws.com/circle-downloads/docker-1.6.2-circleci'; sudo chmod 0755 /usr/bin/docker; true
+
 
 dependencies:
   post:
     - pip --version
     - pip freeze
+    - docker version
+    - docker info
+    - docker images
 
 
 test:
   override:
     - "pylint --msg-template='{msg_id}:{line:3d},{column}: {obj}: {msg}' -E djmoth moth start_daemons.py"
+
     - python manage.py test
 
 
@@ -39,8 +47,13 @@ deployment:
       - sed "s/<EMAIL>/$DOCKER_EMAIL/;s/<AUTH>/$DOCKER_AUTH/" < docker/dockercfg.template > ~/.dockercfg
 
       # Build
-      - docker pull andresriancho/django-moth:stable; true
+      - docker pull andresriancho/django-moth; true
       - sudo docker build -t andresriancho/django-moth .
 
+      # Tag
+      - docker-tag-naming bump andresriancho/django-moth ${CIRCLE_BRANCH} --commit-id ${CIRCLE_SHA1:0:7} > /tmp/docker-tag.txt
+      - docker tag andresriancho/django-moth andresriancho/django-moth:`cat /tmp/docker-tag.txt`
+
       # Push to the registry
-      - docker push andresriancho/w3af:stable
+      - docker push andresriancho/django-moth
+      - docker push andresriancho/django-moth:`cat /tmp/docker-tag.txt`
