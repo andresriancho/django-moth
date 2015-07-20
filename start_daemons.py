@@ -58,7 +58,7 @@ def start_django_app_https(log_directory, python):
 
 
 def _start_django_app(log_directory, python, cmd_fmt, expected_re, log_file):
-    '''
+    """
     Start the django application by running "python manage.py runserver".
     
     Output from the runserver command is stored in a LOG_FILE located in the
@@ -72,7 +72,7 @@ def _start_django_app(log_directory, python, cmd_fmt, expected_re, log_file):
                         successful start of trunserver
     :return: The port in localhost where the application listens for HTTP
              requests
-    '''
+    """
     log_file_path = os.path.join(log_directory, log_file)
     log_file = file(log_file_path, 'w')
     
@@ -129,10 +129,10 @@ def _start_django_app(log_directory, python, cmd_fmt, expected_re, log_file):
 
 
 def log_monitor(process, log_file):
-    '''
+    """
     :param process: The process we want to read output from
     :param log_file: The file where output should be written
-    '''
+    """
     while process.poll() is None:
         reads, _, _ = select.select([process.stdout, process.stderr], [], [], 1)
         for r in reads:
@@ -142,13 +142,13 @@ def log_monitor(process, log_file):
 
 
 def write_address_files(http_port, https_port):
-    '''
+    """
     Since the django application will start on a random port, and we want
     others to know where we are, we just write the address to a fixed file.
     
     :param http_port: The TCP/IP port where the Django application listens
     :param https_port: The TCP/IP SSL port where the Django application listens
-    '''
+    """
     print 'Writing address files ...',
     
     ADDRESS_FMT = '127.0.0.1:%s'
