@@ -5,10 +5,6 @@ machine:
   python:
     version: 2.7.3
 
-  pre:
-    # TODO: Affected by https://github.com/docker/docker/issues/12489 , slow push
-    - sudo curl -L -o /usr/bin/docker 'http://s3-external-1.amazonaws.com/circle-downloads/docker-1.6.2-circleci'; sudo chmod 0755 /usr/bin/docker; true
-
 
 dependencies:
   post:
@@ -49,6 +45,11 @@ deployment:
       # Build
       - docker pull andresriancho/django-moth; true
       - sudo docker build -t andresriancho/django-moth .
+
+      # Verify our build by running it and sending a couple of HTTP requests to it
+      - sudo docker run -d -p 8001:8001 -p 8000:8000 andresriancho/django-moth
+      - sleep 10
+      - nosetests docker/ci.py
 
       # Tag
       - docker-tag-naming bump andresriancho/django-moth ${CIRCLE_BRANCH} --commit-id ${CIRCLE_SHA1:0:7} > /tmp/docker-tag.txt
