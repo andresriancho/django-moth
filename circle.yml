@@ -49,7 +49,7 @@ deployment:
       # Verify our build by running it and sending a couple of HTTP requests to it
       - sudo docker run -d -p 8001:8001 -p 8000:8000 andresriancho/django-moth
       - sleep 10
-      - nosetests docker/ci.py
+      - nosetests -s -v docker/ci.py
 
       # Tag
       - docker-tag-naming bump andresriancho/django-moth ${CIRCLE_BRANCH} --commit-id ${CIRCLE_SHA1:0:7} > /tmp/docker-tag.txt
