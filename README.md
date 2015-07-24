@@ -24,7 +24,7 @@ The easiest way to use `django-moth` is to start a [docker](https://www.docker.c
 container:
 
 ```console
-sudo docker run -p 8000:8000 andresriancho/django-moth
+docker run --name moth --rm -p 8000:8000 -p 8001:8001 andresriancho/django-moth
 ```
 
 Please note that you can build the docker image yourself:
