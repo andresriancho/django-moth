@@ -46,13 +46,13 @@ deployment:
       - docker pull andresriancho/django-moth; true
       - sudo docker build -t andresriancho/django-moth .
 
+      # Install dependencies required to use docker-tag-naming, run tests, etc.
+      - pip install --upgrade -r ci/requirements.txt
+
       # Verify our build by running it and sending a couple of HTTP requests to it
       - sudo docker run -d -p 8001:8001 -p 8000:8000 andresriancho/django-moth
       - sleep 10
       - nosetests -s -v docker/test_smoke.py
-
-      # Install dependencies required to use docker-tag-naming
-      - pip install --upgrade -r ci/requirements.txt
 
       # Tag
       - docker-tag-naming bump andresriancho/django-moth ${CIRCLE_BRANCH} --commit-id ${CIRCLE_SHA1:0:7} > /tmp/docker-tag.txt
