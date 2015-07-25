@@ -23,7 +23,7 @@ RUN apt-get install -y git-core python-pip build-essential python-dev python-sof
 RUN pip install --upgrade pip
 RUN pip install uwsgi==2.0 lxml==3.3.5 django==1.5.1 django-debug-toolbar==0.9.4 \
                 requests==1.2.3 django-crispy-forms==1.3.1 pyOpenSSL==0.13.1 \
-                DAWG==0.7.2 pylibmc==1.2.3
+                DAWG==0.7.2 pylibmc==1.2.3 supervisor-stdout==0.1.1
 
 # Django moth configuration
 RUN useradd ubuntu -d /home/ubuntu
