@@ -12,7 +12,7 @@ This is a rewrite of the [PHP-based moth web application](https://github.com/and
 ```console
 $ git clone https://github.com/andresriancho/django-moth.git
 $ cd django-moth
-$ pip install -r requirements.txt
+$ pip install -r requirements/main.txt
 $ python manage.py runserver
 ```
 
