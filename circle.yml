@@ -7,15 +7,13 @@ machine:
 
 
 dependencies:
-  pre:
-    - pip install --upgrade -r requirements/main.txt
-
   post:
     - pip --version
     - pip freeze
     - docker version
     - docker info
     - docker images
+
 
 test:
   override:
@@ -49,7 +47,7 @@ deployment:
       - sudo docker build -t andresriancho/django-moth .
 
       # Install dependencies required to use docker-tag-naming, run tests, etc.
-      - pip install --upgrade -r requirements/ci.txt
+      - pip install --upgrade -r ci/requirements.txt
 
       # Verify our build by running it and sending a couple of HTTP requests to it
       - sudo docker run -d -p 8001:8001 -p 8000:8000 andresriancho/django-moth
