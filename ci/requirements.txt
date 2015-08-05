@@ -1,2 +1,0 @@
-requests[security]>=2.7.0
-docker-tag-naming>=1.0.4
