@@ -9,7 +9,6 @@ machine:
 dependencies:
   pre:
     - pip install --upgrade -r requirements/main.txt
-    - pip install --upgrade -r requirements/dev.txt
 
   post:
     - pip --version
