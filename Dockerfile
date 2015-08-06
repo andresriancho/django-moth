@@ -20,6 +20,7 @@ RUN git clone https://github.com/andresriancho/django-moth.git
 WORKDIR /home/ubuntu/django-moth
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
+RUN pip install supervisor-stdout==0.1.1
 
 ADD docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
