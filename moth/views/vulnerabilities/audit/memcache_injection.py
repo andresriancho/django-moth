@@ -8,14 +8,14 @@ from moth.views.base.vulnerable_template_view import VulnerableTemplateView
 
 class MemcacheInjectionView(VulnerableTemplateView):
     title = 'Batch injection'
-    tags = ['memcache', 'memcached','injection' ]
-    description = 'Trivial memcache batch injection in a set query'\
-                  ' due to switched off by default sanity checks in'\
-                  ' pylibmc. See issue #4406 for details.'
+    tags = ['memcache', 'memcached', 'injection']
+    description = ('Trivial memcache batch injection in a set query'
+                   ' due to switched off by default sanity checks in'
+                   ' pylibmc. See w3af issue #4406 for details.')
     url_path = 'memcache_value.py?key=1'
 
     def get(self, request, *args, **kwds):
-        mc = pylibmc.Client(["127.0.0.1"])
+        mc = pylibmc.Client(['cache'])
 
         user_input = request.GET.get('key', '1')
 
@@ -36,15 +36,16 @@ class MemcacheInjectionView(VulnerableTemplateView):
 
 
 class _MemcacheInjectionView(VulnerableTemplateView):
-    title = 'Batch injection(internal test version)'
-    tags = ['memcache', 'memcached','injection' ]
+    title = 'Batch injection (internal test version)'
+    tags = ['memcache', 'memcached', 'injection']
     description = 'THIS VERSION IS FOR INTERNAL TESTING PURPOSES!'\
                   'Trivial memcache batch injection in pylibmc. '\
                   ' It outputs the value of the key named "injected".'
     url_path = '_memcache_value.py?key=1'
+    linked = False
 
     def get(self, request, *args, **kwds):
-        mc = pylibmc.Client(["127.0.0.1"])
+        mc = pylibmc.Client(['cache'])
 
         user_input = request.GET.get('key', '1')
 
@@ -60,7 +61,7 @@ class _MemcacheInjectionView(VulnerableTemplateView):
             return render(request, self.template_name, context)
 
         # making fresh connection instead of contaminated one
-        mc = pylibmc.Client(["127.0.0.1"])
+        mc = pylibmc.Client(['cache'])
 
         # pylint: disable=E1101
         injected = mc.get('injected')
