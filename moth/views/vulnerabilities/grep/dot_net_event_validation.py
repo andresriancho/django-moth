@@ -12,6 +12,7 @@ class DotNetWithEVView(HTMLTemplateView):
     <input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEWAgKvz4izBwKM54rGBiEhTsyhLU3XkVd490N5C2TbyVCW" />
     '''
 
+
 class DotNetWithoutEVView(HTMLTemplateView):
     title = '.NET Event validation (insecure)'
     description = 'With VIEWSTATE, without EVENTVALIDATION'
