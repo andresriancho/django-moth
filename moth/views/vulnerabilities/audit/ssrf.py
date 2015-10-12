@@ -1,3 +1,4 @@
+import re
 import json
 import requests
 
@@ -73,6 +74,17 @@ class GetSSRF(VulnerableTemplateView):
     linked = False
     url_path = GET_QUERY
 
+    def validate_url(self, url):
+        for encoded in re.findall('%(.*){0,2}', url):
+            if not encoded:
+                raise Exception('Invalid URL')
+
+            for i in encoded:
+                if i not in 'abcdef0123456789':
+                    raise Exception('Invalid URL')
+
+        return True
+
     def get(self, request, *args, **kwds):
         if LOGIN_ID_KEY not in request.session:
             return redirect(LOGIN_FORM)
@@ -86,6 +98,7 @@ class GetSSRF(VulnerableTemplateView):
         url = 'http://localhost:8000/audit/ssrf/%s?filter=%s&user=%s' % args
 
         try:
+            self.validate_url(url)
             response_json = requests.get(url).json()
         except Exception, e:
             html = ('An error occurred while requesting "%s", the'
