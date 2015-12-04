@@ -7,7 +7,7 @@ class FormAutocompleteFormOff(HTMLTemplateView):
     url_path = 'form-off.html'
     
     HTML = '''
-    <form action="/" autocomplete="off">
+    <form action="/login1" autocomplete="off">
         SSN: <input type="text" name="ssn"><br/>
         Code: <input type="password" name="code"><br/>
         <input type="submit">
@@ -21,7 +21,7 @@ class FormAutocompleteFieldOff(HTMLTemplateView):
     url_path = 'field-off.html'
     
     HTML = '''
-    <form action="/">
+    <form action="/ssn1">
         SSN: <input type="text" name="ssn"><br/>
         Code: <input type="password" name="code" autocomplete="off"><br/>
         <input type="submit">
@@ -35,7 +35,7 @@ class FormAutocompleteTwoFields(HTMLTemplateView):
     url_path = 'form-two-fields.html'
     
     HTML = '''
-    <form action="/">
+    <form action="/ssn2">
         SSN: <input type="text" name="ssn"><br/>
         Code: <input type="password" name="code" autocomplete="on"><br/>
         Extra: <input type="password" name="extra" autocomplete="off"><br/>
@@ -50,7 +50,7 @@ class FormAutocompleteFormOnFieldOff(HTMLTemplateView):
     url_path = 'form-on-field-off.html'
     
     HTML = '''
-    <form action="/" autocomplete="on">
+    <form action="/ssn3" autocomplete="on">
         SSN: <input type="text" name="ssn"><br/>
         Code: <input type="password" name="code" autocomplete="off"><br/>
         <input type="submit">
@@ -64,7 +64,7 @@ class FormAutocompleteFormOnFieldOn(HTMLTemplateView):
     url_path = 'form-on-field-on.html'
     
     HTML = '''
-    <form action="/" autocomplete="on">
+    <form action="/ssn4" autocomplete="on">
         SSN: <input type="text" name="ssn"><br/>
         Code: <input type="password" name="code" autocomplete="on"><br/>
         <input type="submit">
@@ -78,7 +78,7 @@ class FormAutocompleteFormOffNoPassOn(HTMLTemplateView):
     url_path = 'form-off-no-pass-on.html'
     
     HTML = '''
-    <form action="/" autocomplete="off">
+    <form action="/ssn5" autocomplete="off">
         SSN: <input type="text" name="ssn" autocomplete="on"><br/>
         Code: <input type="password" name="code"><br/>
         <input type="submit">
@@ -93,7 +93,7 @@ class FormAutocompleteFormOffFieldOn(HTMLTemplateView):
     url_path = 'form-off-field-on.html'
     
     HTML = '''
-    <form action="/" autocomplete="off">
+    <form action="/ssn6" autocomplete="off">
         SSN: <input type="text" name="ssn"><br/>
         Code: <input type="password" name="code" autocomplete="on"><br/>
         <input type="submit">
@@ -107,7 +107,7 @@ class FormAutocompleteFormOn(HTMLTemplateView):
     url_path = 'form-on.html'
     
     HTML = '''
-    <form action="/" autocomplete="on">
+    <form action="/ssn7" autocomplete="on">
         SSN: <input type="text" name="ssn"><br/>
         Code: <input type="password" name="code"><br/>
         <input type="submit">
@@ -121,7 +121,7 @@ class FormAutocompleteDefault(HTMLTemplateView):
     url_path = 'form-default.html'
     
     HTML = '''
-    <form action="/">
+    <form action="/ssn8">
         SSN: <input type="text" name="ssn"><br/>
         Code: <input type="password" name="code"><br/>
         <input type="submit">
