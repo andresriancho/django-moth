@@ -1,4 +1,4 @@
-django==1.5.1
+django==1.11.23
 django-debug-toolbar==0.9.4
 requests[security]>=2.7.0
 docker-tag-naming>=1.0.4
