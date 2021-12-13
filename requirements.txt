@@ -11,7 +11,7 @@ pyOpenSSL==0.13.1
 DAWG==0.7.2
 
 # xpath injection tests
-lxml==3.3.5
+lxml==4.6.5
 
 # For testing
 django-nose==1.2
